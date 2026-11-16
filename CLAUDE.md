@@ -31,9 +31,9 @@ This file covers the **framework**. The case protocol (how agents read and write
 
 ## Current State
 
-Design phase. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
+**Version 1.0 beta.** The framework concepts, the case protocol, and the Claude Code runtime adapter are stable enough to run cases; they may still change based on feedback. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
 
-The [Framework Concepts](#framework-concepts) are a **draft** to be reviewed with the user.
+Context organizational maps are still drafts, and fixed workflow templates and dynamic extensions are not started (see [The Pipeline](#the-pipeline)).
 
 **Do not** create workflows, execute simulated cases, or implement software until the user explicitly changes scope.
 
@@ -48,13 +48,13 @@ The framework is also:
 - **Operator-agnostic**: whatever uses the framework is an abstract [operator](#operator). The framework makes no assumptions about what or who the operator is (in general it is a human). People otherwise appear only as abstract [human](#role) roles. Both are reached through the [human boundary](#human-boundary).
 - **Runtime-agnostic in concept**: its concepts make no assumptions about which agent platform executes it. In this POC, though, the role, guide, and protocol definitions are written directly as Claude Code agents and skills (see [Runtime](#runtime)).
 
-All data in the POC is mocked. No integrations with live services.
+By default all data is mocked and there are no integrations with live services. A context may declare **live integrations** instead: it names which roles may call which real services (HTTP, MCP), and the orchestrator still validates whatever comes back.
 
 Design priorities: settle concepts and organization (roles and how they interact) before designing any workflow. Aim for variety of interactions, not a large number of roles.
 
 ## Framework Concepts
 
-Status: **draft**. This section defines vocabulary and responsibilities only. Schemas, file formats, and runtime mechanics are open (see [Roadmap and Future](#roadmap-and-future)). Use this vocabulary consistently. Context-specific terms ("department", "order", "customer", "CEO", and so on) may appear only as examples of how a context names a framework concept, never as framework concepts themselves.
+Status: **1.0 beta**. This section defines vocabulary and responsibilities only. Schemas, file formats, and runtime mechanics are open (see [Roadmap and Future](#roadmap-and-future)). Use this vocabulary consistently. Context-specific terms ("department", "order", "customer", "CEO", and so on) may appear only as examples of how a context names a framework concept, never as framework concepts themselves.
 
 ### Framework vs. Context
 
@@ -72,7 +72,7 @@ Context definitions depend on the framework, and case data depends on its contex
 A context is a set of declarative definitions (format TBD):
 
 - **Entry units**: which unit receives each kind of case request and assembles the case response.
-- **Units**: groups of roles, each with one orchestrator. A context maps units to its own terms (departments, teams, squads...). A context with more than one unit also defines a **cross-unit orchestrator** (see [Role](#role)).
+- **Units**: groups of roles, each with one orchestrator. A context maps units to its own terms (departments, teams, squads...). A context with more than one unit also defines a **cross-unit orchestrator**, or assigns that function to the operator (see [Role](#role)).
 - **Roles**: one spec per role (see [Role](#role)).
 - **Interaction contracts**: how roles in different units ask each other for work.
 - **Rules**, **guides**, and **expected outputs**: the extension points (below).
@@ -103,12 +103,12 @@ A role is a responsibility, not a person. One agent may fill several roles, and 
 | Kind | Description |
 |---|---|
 | **Orchestrator** | Supervises a unit. Delegates tasks, validates outputs against expected outputs, and is the only role kind that changes state (case state and shared records), within its authority. Escalates otherwise. An entry unit's orchestrator also sends the case response. |
-| **Cross-unit orchestrator** | An orchestrator whose scope spans several units. It knows how the units fit together, coordinates work and resolves conflicts and escalations that involve more than one unit, so those matters don't need the operator. Required whenever a context has more than one unit. Escalates to the operator only what is outside its authority. |
+| **Cross-unit orchestrator** | An orchestrator whose scope spans several units. It knows how the units fit together, coordinates work and resolves conflicts and escalations that involve more than one unit, so those matters don't need the operator. Required whenever a context has more than one unit, unless the context assigns this function to the operator: then cross-unit conflicts and escalations go straight to the operator. Escalates to the operator only what is outside its authority. |
 | **Specialist** | Does one focused kind of work and returns an output to its orchestrator. Never changes case state or shared records; when a change is needed, its output proposes it and the orchestrator applies it. |
 | **External party** | Someone outside the context's own units (a provider, an independent expert), simulated by an agent. Less trusted: the requesting orchestrator always validates its outputs. |
 | **Human** | A function only a person may perform. Reached through the [human boundary](#human-boundary). Never simulated by an agent unless the run explicitly mocks the human. |
 
-Every role spec defines: **kind, mission, scope, authority, required inputs, produced outputs (expected outputs), guides, dependencies, escalation triggers, reporting line, collaboration interfaces (contracts)**, plus any rules attached to the role.
+Every role spec defines: **kind, status (`active` or `inactive`), mission, scope, authority, required inputs, produced outputs (expected outputs), guides, dependencies, escalation triggers, reporting line, collaboration interfaces (contracts)**, plus any rules attached to the role. An `inactive` role stays defined but is never assigned tasks, and no active role may depend on it; a context activates it by changing its status.
 
 ### Authority
 
@@ -124,7 +124,7 @@ An escalation is raised when:
 - the result is ambiguous, conflicting, or inconclusive,
 - the matter is high-risk or needs physical verification.
 
-Escalations go up the reporting line (specialist → unit orchestrator → cross-unit orchestrator → operator) or straight to the human boundary when a rule or role kind requires a person. Each escalation is recorded as an event with its reason, and the affected task stays in the `escalated` state until it is resolved.
+Escalations go up the reporting line (specialist → unit orchestrator → cross-unit orchestrator, if the context has one → operator) or straight to the human boundary when a rule or role kind requires a person. Each escalation is recorded as an event with its reason, and the affected task stays in the `escalated` state until it is resolved.
 
 ### Human Boundary
 
@@ -221,11 +221,11 @@ runtimes/
 
 ### The Pipeline
 
-1. **Framework concepts (current, draft):** this file.
+1. **Framework concepts (1.0 beta):** this file.
 2. **Context organizational maps (current, draft):** per context, see its `CLAUDE.md`.
 3. Fixed workflow templates.
 4. Controlled dynamic extensions.
-5. **Runtime adapters (current, draft):** `runtimes/claude-code/`, run a case with `/run-case <context> <request>`.
+5. **Runtime adapters (1.0 beta):** `runtimes/claude-code/`, run a case with `/run-case <context> <request>`.
 
 Do not move to a later stage without the user's direction.
 
@@ -235,7 +235,7 @@ Concepts, shared context definitions, state, and artifacts are platform-neutral.
 
 ## Roadmap and Future
 
-**Next task:** review the framework concepts and the firearm-store organizational map drafts with the user.
+**Next task:** draft the `software-dev` organizational map once the user provides its guides (skills). Agreed lineup: units Product (entry; Product Owner; Business Analyst, UX Designer), Engineering (Tech Lead; Software Architect, Software Developer), Quality (Quality Lead; QA Developer, Security Reviewer); an active External Provider external party; Release/Ops (Release Manager; DevOps/SRE) inactive; no cross-unit orchestrator (the operator, a software engineer, fills it and is the approver); no human roles; specialists call real services directly over HTTP/MCP.
 
 **Open questions (ask the user; don't decide unilaterally):**
 - File formats and schemas for context definitions, state, events, and artifacts.

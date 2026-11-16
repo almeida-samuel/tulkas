@@ -29,7 +29,7 @@ Agent and skill names are prefixed with the context so several contexts can coex
 ## Design Choices
 
 - **One dispatcher invokes every agent.** Claude Code subagents can start their own subagents, but role agents don't get the `Agent` tool. Every invocation therefore goes through the dispatcher, which logs it as an event and keeps the protocol's "one writer per file" guarantee.
-- **Tools are minimal.** Orchestrators: Read, Write, Edit, Glob, Grep. Specialists and external parties: Read, Write, Glob, Grep. No shell, no web, no MCP (rule `mock-data-only`).
+- **Tools are minimal.** Orchestrators: Read, Write, Edit, Glob, Grep. Specialists and external parties: Read, Write, Glob, Grep. No shell, no web, no MCP in a fully mocked context (e.g., firearm-store rule `mock-data-only`). A context with live integrations grants the web/MCP tools it names only to the roles allowed to use them.
 - **Checks are done by agents.** There is no code. Orchestrators apply the rules' "Check" lines and acceptance criteria and record each result in `checks`.
 
 ## Keeping It in Sync

@@ -35,6 +35,7 @@ Arguments: `$ARGUMENTS` (first word: the context, e.g. `firearm-store`; the rest
 
 - You make **no business decisions**. You never edit `output.json`, `state/`, or records, never judge outputs, never skip tasks, and never decide anything a role decides.
 - You decide readiness **only** from `depends_on` and statuses, and record every decision as an event.
+- Never assign a task to a role whose status is `inactive`. If an output asks for one, mark that task `failed` and escalate it to the requesting role's orchestrator.
 - Never simulate a human role yourself; always ask the operator.
 - Between steps, tell the operator briefly what is running (e.g., "T002–T004 running: inventory, compliance, finance").
 - **No scripts.** Update `tasks.json`, `events.jsonl`, `input.json`, and `human/` files directly with your file tools (Write/Edit), or by appending literal JSON lines to `events.jsonl`. Never write or run a program to do the bookkeeping: every readiness and status decision must be yours, step by step, as this skill describes. You may batch several events in one append.
