@@ -35,7 +35,7 @@ This file covers the **framework**. The case protocol (how agents read and write
 
 Context organizational maps are still drafts, and fixed workflow templates and dynamic extensions are not started (see [The Pipeline](#the-pipeline)).
 
-**Do not** create workflows, execute simulated cases, or implement software until the user explicitly changes scope.
+**Do not** create workflow templates or dynamic extensions until the user explicitly changes scope.
 
 ## Project Overview
 
@@ -235,7 +235,7 @@ Concepts, shared context definitions, state, and artifacts are platform-neutral.
 
 ## Roadmap and Future
 
-**Next task:** draft the `software-dev` organizational map once the user provides its guides (skills). Agreed lineup: units Product (entry; Product Owner; Business Analyst, UX Designer), Engineering (Tech Lead; Software Architect, Software Developer), Quality (Quality Lead; QA Developer, Security Reviewer); an active External Provider external party; Release/Ops (Release Manager; DevOps/SRE) inactive; no cross-unit orchestrator (the operator, a software engineer, fills it and is the approver); no human roles; specialists call real services directly over HTTP/MCP.
+**Next task:** draft the `software-dev` organizational map (see `contexts/software-dev/CLAUDE.md`) once the user provides its guides.
 
 **Open questions (ask the user; don't decide unilaterally):**
 - File formats and schemas for context definitions, state, events, and artifacts.
