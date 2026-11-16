@@ -1,6 +1,6 @@
-# cc-agents-poc
+# Tulkas
 
-A proof of concept for a **framework in which AI agents run an entire operation, with humans only at the boundary**: approvals, judgment calls, physical actions, and real-world information.
+**Tulkas** is a **framework in which AI agents run an entire operation, with humans only at the boundary**: approvals, judgment calls, physical actions, and real-world information.
 
 The framework itself is **context-agnostic**: it knows nothing about businesses, stores, or teams. Whatever runs on it is a *context*. The first context is a **mock firearm store**, chosen for its variety of roles and interactions: sales, inventory, compliance with background checks, financing, purchasing, inspections, and external experts.
 

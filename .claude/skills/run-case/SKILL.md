@@ -1,7 +1,7 @@
 ---
 name: run-case
 description: Open and run a simulated case on the framework, acting as the dispatcher and the human boundary between the operator (the user) and the role agents.
-argument-hint: <context> <request in plain words>
+argument-hint: [context] <request in plain words>
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,9 @@ You are the **dispatcher** for a case. The user is the **operator**. This skill 
 - the `case-protocol` skill (`.claude/skills/case-protocol/SKILL.md`): case folder, tasks, output format, events;
 - `contexts/<context>/CLAUDE.md`: the context's entry units and vocabulary.
 
-Arguments: `$ARGUMENTS` (first word: the context, e.g. `firearm-store`; the rest: the operator's request). If either is missing, ask for it.
+Arguments: `$ARGUMENTS`: the operator's request, optionally preceded by the context.
+
+**Context.** If the first word names a context (a folder in `contexts/`), use it and treat the rest as the request. Otherwise read the repository's `.claude/tulkas.json` (`{"context": "<context>"}`), which sets the context for every case run from that repository. If neither gives a context, ask for it. If the request is missing, ask for it.
 
 ## Dispatcher Loop
 

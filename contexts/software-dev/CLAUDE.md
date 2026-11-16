@@ -11,7 +11,7 @@ Guidance for the **software-dev** context: a software development team running o
 
 ## Current State
 
-Design phase. The role lineup below is agreed; the organizational map files (units, contracts, agents, guides, rules) are not drafted yet.
+Design phase. The role lineup, guides, and rules are drafted for review; the organizational map files (organization, units, contracts, agents) are not drafted yet.
 
 ## Overview
 
@@ -47,6 +47,41 @@ This context declares live integrations: specialists call real services directly
 - **External Provider** (external party, active): one generic role, reached through a contract when a case needs a provider's answer or judgment (not a plain service call). Each case says which provider it stands for. It is an agent with live access to the provider's services and documentation; the requesting orchestrator always validates its response.
 - Work flow: Product asks Engineering for a change through a contract; Engineering asks Quality to verify it; Product accepts the result only if Quality's report passes. Engineering never approves its own work.
 
+## Repository, Branches, and Documents
+
+The **repository** a case runs in is the one the operator works from; its own guidance (its `CLAUDE.md`) supplies everything technology-specific: stack, commands, environment, conventions, protected branches. Guides never assume a language or framework.
+
+| Action | Treated as | Who |
+|---|---|---|
+| Create the case branch `<type>/<case-id>` and its worktree (default `.tulkas/worktrees/<case-id>`, git-ignored) | State change | Tech Lead |
+| Edit files in the case worktree | Work product (like `artifacts/`) | Software Developer; QA Developer and Security Reviewer only for throwaway probes, deleted before reporting |
+| Commit on the case branch | State change, within authority | Tech Lead, after accepting the implementation ([case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)) |
+| Publish accepted documents to `docs/tulkas/<kind>/<case-id>.md` | State change, part of a commit | Tech Lead (spec, experience design, PRD, PRP); Quality Lead writes the audit, Tech Lead commits it |
+| Push, pull request, merge, or anything touching a shared branch | Outward-facing, hard to reverse | Only with the operator's approval ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md)) |
+
+Specialists never change version control ([specialists-dont-commit](../../.claude/rules/software-dev/specialists-dont-commit.md)). One branch and worktree per case keeps parallel cases from writing the same files and leaves the operator's own checkout untouched.
+
+Document kinds under `docs/tulkas/`: `features`, `bugfixes`, `refactors`, `experience`, `prds`, `prps`, `audits`. Every document of a case is named after the case ID.
+
+A repository is prepared with `/tulkas-init software-dev`, which checks its `CLAUDE.md` against [repository-requirements.md](repository-requirements.md) (what the roles need from it, the conflicts to resolve, and the Tulkas section to add).
+
+## Guides and Rules
+
+| Role | Guides |
+|---|---|
+| Product Owner | [work-intake](../../.claude/skills/software-dev-work-intake/SKILL.md), [product-language](../../.claude/skills/software-dev-product-language/SKILL.md) |
+| Business Analyst | [feature-spec](../../.claude/skills/software-dev-feature-spec/SKILL.md), [bugfix-spec](../../.claude/skills/software-dev-bugfix-spec/SKILL.md), [refactor-spec](../../.claude/skills/software-dev-refactor-spec/SKILL.md), [prd](../../.claude/skills/software-dev-prd/SKILL.md), [product-language](../../.claude/skills/software-dev-product-language/SKILL.md) |
+| UX Designer | [experience-design](../../.claude/skills/software-dev-experience-design/SKILL.md), [product-language](../../.claude/skills/software-dev-product-language/SKILL.md) |
+| Tech Lead | [technical-acceptance](../../.claude/skills/software-dev-technical-acceptance/SKILL.md), [guideline-conformance](../../.claude/skills/software-dev-guideline-conformance/SKILL.md) |
+| Software Architect | [prp](../../.claude/skills/software-dev-prp/SKILL.md), [guideline-conformance](../../.claude/skills/software-dev-guideline-conformance/SKILL.md) |
+| Software Developer | [prp-implementation](../../.claude/skills/software-dev-prp-implementation/SKILL.md) |
+| Quality Lead | [verification-verdict](../../.claude/skills/software-dev-verification-verdict/SKILL.md) |
+| QA Developer | [implementation-audit](../../.claude/skills/software-dev-implementation-audit/SKILL.md), [guideline-conformance](../../.claude/skills/software-dev-guideline-conformance/SKILL.md) |
+| Security Reviewer | [security-review](../../.claude/skills/software-dev-security-review/SKILL.md) |
+| External Provider | [provider-inquiry](../../.claude/skills/software-dev-provider-inquiry/SKILL.md) |
+
+Rules live in `.claude/rules/software-dev/` (each lists the roles it binds): `product-docs-no-technical-content`, `pipeline-order`, `case-id-naming`, `results-verified-by-running`, `bugfix-requires-regression-test`, `refactor-preserves-behavior`, `delivery-requires-verification-pass`, `deviations-go-to-operator`, `validate-external-outputs`, `probes-deleted`, `case-branch-only`, `push-merge-requires-operator`, `specialists-dont-commit`.
+
 ## Roadmap and Future
 
-**Next task:** draft the organizational map files once the user provides the guides (skills) and says which roles use them.
+**Next task:** the user reviews the guides and rules; then draft the organizational map files (organization, units, contracts, agent files).

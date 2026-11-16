@@ -31,7 +31,7 @@ This file covers the **framework**. The case protocol (how agents read and write
 
 ## Current State
 
-**Version 1.0 beta.** The framework concepts, the case protocol, and the Claude Code runtime adapter are stable enough to run cases; they may still change based on feedback. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
+**Version 1.0 beta** (see `VERSION`). The framework concepts, the case protocol, and the Claude Code runtime adapter are stable enough to run cases; they may still change based on feedback. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. The only exception is the deploy script (`scripts/deploy.sh`), which copies files and never takes part in running a case. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
 
 Context organizational maps are still drafts, and fixed workflow templates and dynamic extensions are not started (see [The Pipeline](#the-pipeline)).
 
@@ -39,7 +39,7 @@ Context organizational maps are still drafts, and fixed workflow templates and d
 
 ## Project Overview
 
-A proof of concept for a **framework in which agents run an entire operation, with humans at the boundary** wherever they are needed (approval, judgment, physical action, real-world information). It explores delegation, orchestration, collaboration across units, escalation, and structured artifacts.
+**Tulkas** is a framework in which **agents run an entire operation, with humans at the boundary** wherever they are needed (approval, judgment, physical action, real-world information). It explores delegation, orchestration, collaboration across units, escalation, and structured artifacts.
 
 The framework is **context-agnostic**. It has no notion of a business, company, or any particular kind of organization. Whatever runs on it (a store, a software team, a lab, anything else) is a **context**: a pluggable definition package. Nothing context-specific belongs in the framework, and adding a context must never require changing the framework.
 
@@ -160,9 +160,12 @@ The framework's concepts don't depend on any agent platform. For this POC the on
 - `.claude/agents/<context>-<role-id>.md`: one agent per non-human role, holding its full role spec and expected outputs.
 - `.claude/skills/<context>-<guide-id>/`: one skill per guide, holding the full guide.
 - `.claude/skills/case-protocol/`, `run-case/`, `orchestrator-turn/`: the case protocol, the dispatcher loop, and the orchestrator turn (including the case response and human request).
+- `.claude/skills/tulkas-init/`: prepares a repository for a context: audits its `CLAUDE.md` against the context's `repository-requirements.md` (if it has one), proposes a refactor, and applies it once the operator approves.
 - `.claude/rules/<context>/`: one rule file per context rule, path-scoped to `data/<context>/**` so it loads whenever an agent touches that context's case data or records.
 
 Shared context files (units, contracts, organization, mock data, human roles) stay in `contexts/<context>/`. Moving to another runtime later means converting the `.claude/` files. `runtimes/claude-code/README.md` describes the mapping.
+
+**Deployment.** This repository is the source. `scripts/deploy.sh [context...]` copies the framework skills and the chosen contexts (all by default) to `~/.claude` (agents, skills, and rules in their usual folders; shared context files in `~/.claude/tulkas/contexts/`), rewriting links to absolute paths. It records the deployed version and file list in `~/.claude/tulkas/`, so a redeploy replaces the previous one cleanly. Bump `VERSION` for each release. Each repository that uses the framework picks its context in `.claude/tulkas.json` (`{"context": "<context>"}`) and keeps its case data in `data/<context>/`.
 
 ### Persistence
 
@@ -170,6 +173,8 @@ The local filesystem is the database, kept as inspectable folders. Layout (every
 
 ```text
 CLAUDE.md                   # framework guidance (this file)
+VERSION                     # framework version
+scripts/deploy.sh           # deploys the framework and contexts to ~/.claude
 contexts/
   <context>/
     CLAUDE.md               # context guidance

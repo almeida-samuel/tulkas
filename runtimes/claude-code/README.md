@@ -2,10 +2,30 @@
 
 Claude Code is the POC's runtime. To keep a **single source of truth**, the files under `.claude/` *are* the role, guide, rule, and protocol definitions; nothing is generated or copied. Shared context definitions stay in `contexts/<context>/`.
 
+## Deploy
+
+Deploy from this repository to `~/.claude` whenever the framework or a context changes:
+
+```text
+scripts/deploy.sh                  # framework + every context
+scripts/deploy.sh software-dev     # framework + only the contexts named
+scripts/deploy.sh -n               # dry run
+```
+
+The deploy replaces the previous one (files it deployed before are removed first) and never overwrites files it did not deploy. `~/.claude/tulkas/VERSION` shows the deployed version and commit. Deployed agents and skills are available in every repository; inside this repository the project copies under `.claude/` take precedence.
+
+In a repository that uses the framework, run `/tulkas-init <context>` once. It audits the repository's `CLAUDE.md` against the context's `repository-requirements.md`, proposes a refactor (including a Tulkas section), and, once you approve, applies it and sets the context:
+
+```json
+// .claude/tulkas.json
+{ "context": "software-dev" }
+```
+
 ## Run a Case
 
 ```text
 /run-case firearm-store A customer wants a quotation for a handgun, paying cash
+/run-case Add rate limiting to the public API     # context from .claude/tulkas.json
 ```
 
 The main conversation becomes the **dispatcher** and the **human boundary**. You are the operator: case responses and human requests appear in the conversation, and you answer there.
