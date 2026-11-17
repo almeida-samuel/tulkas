@@ -46,7 +46,7 @@ Shared records live in `docs/tulkas/records/<unit>/` and are changed **only** by
 }
 ```
 
-`closed_at` and `closure` appear only once the case is closed. **A case is closed only by the operator** (the `close-case` skill), whatever state its tasks, branch, or pull request are in: a merge is not required, and an open pull request stays open. A closed case is never resumed; further work is a new case.
+`closed_at` and `closure` appear only once the case is closed (see [Closed Case](#closed-case)). **A case is closed only by the operator** (the `close-case` skill), whatever state its tasks, branch, or pull request are in: a merge is not required, and an open pull request stays open. A closed case is never resumed; further work is a new case.
 
 **Workspace.** A context whose cases change the repository declares a **case branch** in its `CLAUDE.md` (its name, built from the case ID only). The dispatcher then creates it when it opens the case, in one of two modes:
 
@@ -128,6 +128,16 @@ Specialists and external parties leave every list empty except `checks`, and nev
 - Never write `metadata.json`, `tasks.json`, `events.jsonl`, another task's file, or anything another role owns.
 - If the input is insufficient, still write your response: say what is missing in `output` and `summary`; don't invent data.
 - If the mock data you need doesn't exist, report it; don't make it up.
+
+## Closed Case
+
+When the operator closes a case, the `close-case` skill **folds** its task files into `tasks.json` and deletes the `tasks/` folder, so a closed case keeps one file for all its tasks. Each entry gains the task file's `input` and `response`, and the result file's content as `result` when there was one; a task that never had a task file gains nothing:
+
+```json
+{"id": "T004", "role": "stock-manager", "type": "contract", "...": "...", "input": { }, "response": { }, "result": { }}
+```
+
+Content is moved, never edited, so paths inside it still read `tasks/<task-id>.json` or `tasks/<task-id>.result.json`: in a closed case, read them as the `input`/`response` or `result` of that task's entry in `tasks.json`. `closure.tasks_folded` in `metadata.json` says a case was folded. Only open cases have task files; a closed case is never resumed, so no role reads it.
 
 ## Event
 

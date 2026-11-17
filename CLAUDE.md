@@ -193,11 +193,11 @@ docs/tulkas/
     <case-id>/              # inside the case's workspace (see Workspace)
       metadata.json         # context and workspace
       request.md
-      tasks.json
+      tasks.json            # task list; at closing, also every task's input, response, and result
       events.jsonl
       state/<unit>.json
-      tasks/<task-id>.json  # input and response of one task
-      tasks/<task-id>.result.json  # long expected output, when needed
+      tasks/<task-id>.json  # input and response of one task (open cases only)
+      tasks/<task-id>.result.json  # long expected output, when needed (open cases only)
       human/
       documents/
       artifacts/
