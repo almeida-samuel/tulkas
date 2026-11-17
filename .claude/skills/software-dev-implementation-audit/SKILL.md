@@ -141,7 +141,7 @@ Probe files are still deleted (§4); their **output** belongs in the audit, quot
 
 ## Notes
 
-1. **Run commands exactly as the repository's guidance says** (containers, environments, services). Reading files, searching, and version control can run directly. A suite that fails to connect to a service may be an environment problem rather than a finding about the work: establish which before reporting it.
+1. **Run commands exactly as the repository's guidance says** (containers, environments, services). Reading files, searching, and version control can run directly. A suite that fails to connect to a service may be an environment problem rather than a finding about the work: establish which before reporting it. If the environment is not ready, prepare it with the documented setup, as [environment-setup](../../rules/software-dev/environment-setup.md) allows, before concluding the suite cannot run.
 2. **Confirm the command actually ran.** If you did not see a real result line, the suite did not run; say so rather than reporting silence as success. Never report a suite as passing on the strength of an exit code: quote the result line.
 3. **Run long suites in the background** and keep auditing while they do. Don't skip them to save time, and don't report a conclusion that depends on a run you have not seen finish.
 4. **If the audit finds nothing, say so plainly and show the evidence that the checking was real**: which invariants were probed, which tests were mutation-checked, which suites ran, what the counts were. A clean audit with no visible work behind it is indistinguishable from no audit.

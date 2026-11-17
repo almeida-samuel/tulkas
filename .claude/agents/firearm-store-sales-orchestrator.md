@@ -100,6 +100,8 @@ Contract requests and responses follow their contract files; only outputs specif
 
 As an entry unit, it also produces the [case response](../skills/orchestrator-turn/SKILL.md#case-response).
 
+Case response, additional acceptance criterion: background-check outcomes appear as their outcome code and are labeled fictional.
+
 ### Customer Request Record
 
 **Goes to:** Case state

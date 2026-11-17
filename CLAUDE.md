@@ -240,7 +240,7 @@ Concepts, shared context definitions, state, and artifacts are platform-neutral.
 
 ## Roadmap and Future
 
-**Next task:** draft the `software-dev` organizational map (see `contexts/software-dev/CLAUDE.md`) once the user provides its guides.
+**Next task:** review the `software-dev` organizational map draft and run its first case (see `contexts/software-dev/CLAUDE.md`).
 
 **Open questions (ask the user; don't decide unilaterally):**
 - File formats and schemas for context definitions, state, events, and artifacts.

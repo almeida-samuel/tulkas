@@ -19,7 +19,7 @@ Run the engineering half of the pipeline: get a PRP from the architect, get it i
 
 ## Plan
 
-0. **Case branch and worktree**: create the branch `<type>/<case-id>` (`feature/`, `bugfix/`, or `refactor/`) from the branch the repository's guidance names as the base (by default the default branch), checked out in its own worktree (by default `.tulkas/worktrees/<case-id>`, git-ignored). Every engineering and quality task of the case works there. Never work in the operator's own checkout.
+0. **Case branch and worktree**: create the branch `<type>/<case-id>` (`feature/`, `bugfix/`, or `refactor/`) from the branch the repository's guidance names as the base (by default the default branch), checked out in its own worktree (by default `.tulkas/worktrees/<case-id>`, git-ignored). Every engineering and quality task of the case works there. Never work in the operator's own checkout. Then make sure the worktree can run the repository's suites: start the documented environment, install declared dependencies, and prepare the test database, as [environment-setup](../../rules/software-dev/environment-setup.md) allows.
 1. **PRP**: Software Architect, from the accepted PRD (and experience design, when there is one).
 2. **Accept the PRP** (below). Deviations it announces from the PRD go back to Product before implementation, because they change what was agreed.
 3. **Implementation**: Software Developer, from the accepted PRP.
@@ -53,5 +53,5 @@ Reject with the specific items that failed. After 3 failed attempts, escalate.
 ## When to Escalate to the Operator
 
 - The architect and the PRD disagree in a way that changes the product (a requirement is infeasible, far more costly than expected, or conflicts with the repository's rules).
-- The environment the repository requires cannot run (tests cannot be executed at all).
+- The environment the repository requires cannot run (tests cannot be executed at all) even after the setup [environment-setup](../../rules/software-dev/environment-setup.md) allows was tried and failed. A pre-existing defect that stops the suite (a broken test on the base branch) is not an environment problem: bring it to Product as a decision, with the options.
 - Quality and Engineering disagree on a finding after one round of fixes.

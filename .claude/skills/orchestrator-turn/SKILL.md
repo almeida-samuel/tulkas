@@ -44,10 +44,10 @@ Produced by orchestrators: the case response by the entry unit's orchestrator, h
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `case_id` | string | yes | Case the output belongs to. |
-| `entry_unit` | string | yes | `sales` or `purchasing`. |
+| `entry_unit` | string | yes | The context's entry unit that handled the case (see the context's `CLAUDE.md`). |
 | `type` | enum | yes | `deliverable`, `blocking-findings`, or `information-needed`. |
 | `summary` | text | yes | One or two sentences the operator can act on. |
-| `deliverable` | object | no | For `deliverable`: e.g., the quote or the used-item offer. |
+| `deliverable` | object | no | For `deliverable`: the requested result, in the shape the entry orchestrator's agent file defines. |
 | `findings` | list | no | For `blocking-findings`: `{unit, finding, source_ref}` per finding. |
 | `information_needed` | list | no | For `information-needed`: `{field, reason, rule_id}` per item. |
 | `next_step` | text | yes | What happens when the operator answers or accepts. |
@@ -58,7 +58,7 @@ Produced by orchestrators: the case response by the entry unit's orchestrator, h
 - If anything blocks the case and information is also missing, use `blocking-findings` and list the missing information too, so the operator gets everything at once.
 - Every finding cites the contract response or event it comes from.
 - Every information-needed item names the rule that requires it.
-- Background-check outcomes appear as their outcome code and are labeled fictional.
+- Any acceptance criteria the entry orchestrator's agent file adds for its case responses.
 
 ### Human Request
 

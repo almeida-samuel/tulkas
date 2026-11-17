@@ -11,7 +11,7 @@ Guidance for the **software-dev** context: a software development team running o
 
 ## Current State
 
-Design phase. The role lineup, guides, and rules are drafted for review; the organizational map files (organization, units, contracts, agents) are not drafted yet.
+Design phase. The role lineup, guides, rules, and the organizational map (organization, units, contracts, agents) are drafted for review. No case has run yet.
 
 ## Overview
 
@@ -37,6 +37,13 @@ This context declares live integrations: specialists call real services directly
 
 ## Organizational Map
 
+The organizational map (draft) lives in separate files; this section only summarizes it.
+
+- [organization.md](organization.md): organization diagram, interaction matrix, tools, escalation paths, handoff scenarios, and open questions. Start here.
+- `units/<unit>.md`: one per team: orchestrator, members, and what it owns.
+- Roles: each active non-human role is a Claude Code agent, `.claude/agents/software-dev-<role-id>.md`, holding its full spec, tools, and expected outputs. Release/Ops roles are inactive and get agent files when activated.
+- `interaction-contracts/<contract-id>.md`: [engineering-change](interaction-contracts/engineering-change.md), [verification](interaction-contracts/verification.md), [provider-inquiry](interaction-contracts/provider-inquiry.md).
+
 | Unit | Status | Orchestrator | Specialists |
 |---|---|---|---|
 | **Product** (entry) | active | Product Owner | Business Analyst, UX Designer |
@@ -54,6 +61,7 @@ The **repository** a case runs in is the one the operator works from; its own gu
 | Action | Treated as | Who |
 |---|---|---|
 | Create the case branch `<type>/<case-id>` and its worktree (default `.tulkas/worktrees/<case-id>`, git-ignored) | State change | Tech Lead |
+| Prepare the environment: start it, install declared dependencies, create or load the test database ([environment-setup](../../.claude/rules/software-dev/environment-setup.md)) | Work, no approval needed | Any role with the shell, inside the environment the guidance requires |
 | Edit files in the case worktree | Work product (like `artifacts/`) | Software Developer; QA Developer and Security Reviewer only for throwaway probes, deleted before reporting |
 | Commit on the case branch | State change, within authority | Tech Lead, after accepting the implementation ([case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)) |
 | Publish accepted documents to `docs/tulkas/<kind>/<case-id>.md` | State change, part of a commit | Tech Lead (spec, experience design, PRD, PRP); Quality Lead writes the audit, Tech Lead commits it |
@@ -80,8 +88,8 @@ A repository is prepared with `/tulkas-init software-dev`, which checks its `CLA
 | Security Reviewer | [security-review](../../.claude/skills/software-dev-security-review/SKILL.md) |
 | External Provider | [provider-inquiry](../../.claude/skills/software-dev-provider-inquiry/SKILL.md) |
 
-Rules live in `.claude/rules/software-dev/` (each lists the roles it binds): `product-docs-no-technical-content`, `pipeline-order`, `case-id-naming`, `results-verified-by-running`, `bugfix-requires-regression-test`, `refactor-preserves-behavior`, `delivery-requires-verification-pass`, `deviations-go-to-operator`, `validate-external-outputs`, `probes-deleted`, `case-branch-only`, `push-merge-requires-operator`, `specialists-dont-commit`.
+Rules live in `.claude/rules/software-dev/` (each lists the roles it binds): `product-docs-no-technical-content`, `pipeline-order`, `case-id-naming`, `results-verified-by-running`, `bugfix-requires-regression-test`, `refactor-preserves-behavior`, `delivery-requires-verification-pass`, `deviations-go-to-operator`, `validate-external-outputs`, `probes-deleted`, `case-branch-only`, `push-merge-requires-operator`, `specialists-dont-commit`, `environment-setup`.
 
 ## Roadmap and Future
 
-**Next task:** the user reviews the guides and rules; then draft the organizational map files (organization, units, contracts, agent files).
+**Next task:** the user reviews the organizational map draft (with the guides and rules), then runs a first case in a repository prepared with `/tulkas-init software-dev`. Open questions are listed in [organization.md](organization.md#open-questions).
