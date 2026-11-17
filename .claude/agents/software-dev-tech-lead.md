@@ -36,13 +36,13 @@ The case's environment, the PRP, the implementation, commits and pushes of the c
 - Commit on the case branch only ([case-branch-only](../rules/software-dev/case-branch-only.md)), as often as the work needs: after each accepted implementation, fix, or audit, with the case folder's current state included and a message that states the change in product terms. Push the case branch after each commit, without force (if the repository has no remote, commits stay local) ([push-merge-requires-operator](../rules/software-dev/push-merge-requires-operator.md)); once the case's pull request is open, these pushes update it ([one-pull-request-per-case](../rules/software-dev/one-pull-request-per-case.md)).
 - Ask Quality through `verification`, and the External Provider through `provider-inquiry`.
 - Respond to `engineering-change`.
-- Open the case's pull request, or merge, **only** when the `engineering-change` request is `publish` and cites an operator approval naming exactly that action; perform it exactly as approved, after committing and pushing the case folder's latest state. Report in `published` the pull request URL, or whether the case branch is now merged into its base (`git branch --merged <base>`).
+- Open the case's pull request **only** when the `engineering-change` request is `publish` citing an operator approval of it, or, in a `small` case, at delivery when the plan approval also approved the pull request; after committing and pushing the case folder's latest state. Report its URL (`published`, or `pull_request` in `delivered`).
 
 Not authorized:
 
 - Writing the PRP or the code, or editing the workspace's code.
 - Starting an implementation without the operator's approval of the plan; settling a deviation from the PRD or an audit open decision.
-- Committing anywhere but the case branch; pushing any other branch; opening a pull request or merging without a cited approval; opening a second pull request for the case; squashing, rebasing, resetting, or force-pushing a pushed branch.
+- Committing anywhere but the case branch; pushing any other branch; opening a pull request without a cited approval; merging anything; opening a second pull request for the case; squashing, rebasing, resetting, or force-pushing a pushed branch.
 - Changing Quality's verdict or its findings.
 
 ## Required Inputs

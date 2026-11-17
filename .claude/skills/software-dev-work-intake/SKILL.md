@@ -31,6 +31,7 @@ Every case is exactly one of three task types. Decide which from what the reques
 - A refactor that changes anything users can see is not a refactor: it is a feature (or contains one). Say so.
 - A request that mixes several work items (two features, a fix plus a refactor) is **one case per item**. Ask the operator to split it, proposing the split; don't run several items through one pipeline.
 - If the type is genuinely ambiguous, ask the operator (judgment request) with the options and what each one leads to.
+- **Size class.** Mark the item `small` when **all** hold: the correct behavior is obvious from the request (the operator already said what it should do, or there is one sensible answer); it touches one product surface (one screen, email, message, or flow); it adds no new screen, flow, permission, or kind of data; and you expect a handful of requirements at most. Typical: a bugfix with an obvious fix, a wording or display change. Anything else is `standard`. Record the size in the work item and pass it in every task input and `engineering-change` request. When unsure, `standard`. The operator can override the size in any answer.
 - **Size the item.** One case should fit one PRD of up to about 25 requirements and one round of implementation. A request bigger than that ("refactor every screen") is several items: propose the split now, in the same request as any other question, rather than after the documents grew.
 
 ## 2. Check the Repository Is Ready
@@ -46,9 +47,19 @@ The technical roles depend on the repository's own guidance (normally its `CLAUD
 5. **Plan approval**: send the operator one **approval** request for the plan ([implementation-requires-approval](../../rules/software-dev/implementation-requires-approval.md)): the PRD in brief (what changes for whom, requirement count), the PRP's approach, files, tasks, and tests in a few lines, every deviation with its options, and the paths of the full documents. Options: approve; change, with notes; stop. Put any other open question in the same request.
 6. **Case response**: when Engineering returns, with Quality's verdict, send the deliverable, the blocking findings, or the information still needed.
 
+### Small Cases
+
+A `small` case runs the same roles with less paper:
+
+1. **One product document**: the Business Analyst writes the **PRD straight from the request** (the [prd](../software-dev-prd/SKILL.md) guide's *Small Cases*); there is no separate spec and no experience design.
+2. **No question round**: open questions that have a sensible default are not asked up front. The Business Analyst takes the default and records it as an assumption in the PRD; you list those assumptions in the plan approval, where the operator can change them. Only a question with no sensible default is asked before the PRD (and then reconsider whether the case is really small).
+3. **Engineering request** with `size: small` (a short PRP, see the [prp](../software-dev-prp/SKILL.md) guide).
+4. **Plan approval and pull request together**: the one approval request covers the plan, the assumptions, and opening the case's pull request at delivery. Options: approve, and open the pull request when delivered; approve, but don't open the pull request yet; change, with notes; stop. Pass the answer back in one `continue`.
+5. **Case response**: the deliverable, with the pull request already open when it was approved, and nothing left to approve.
+
 ## 4. Accept Product Documents
 
-Accept a spec, experience design, or PRD only when:
+Accept a spec, experience design, or PRD only when (a `small` case's PRD stands in for the spec too):
 
 - it has every section its guide requires, for its task type;
 - it passes [product-language](../software-dev-product-language/SKILL.md): read it line by line against the ban list. Reject a document with any violation and name the sentences;
@@ -63,7 +74,7 @@ Collect into **one** request, rather than asking several times:
 - the task type, when ambiguous;
 - a split, when the request holds several work items;
 - scope trade-offs Engineering raises later (e.g., a requirement that costs far more than its value);
-- approval to open the case's pull request, or to merge, when the work is delivered.
+- approval to open the case's pull request, when the work is delivered (in a `small` case, already asked with the plan). Merging is never asked: the operator merges.
 
 Never answer a product question yourself by guessing what the operator would want. A recorded assumption is acceptable only when the question is minor and the document says it is an assumption.
 

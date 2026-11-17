@@ -137,4 +137,6 @@ One JSON object per line in `events.jsonl`:
 {"ts": "2026-11-09T19:22:10Z", "actor": "sales-orchestrator", "type": "task-completed", "task_id": "T001", "data": {}}
 ```
 
+`ts` is the real UTC time the event was written, read from the system clock (`date -u +%Y-%m-%dT%H:%M:%SZ`), never estimated.
+
 Types: `case-opened`, `task-created`, `task-ready`, `task-started`, `task-completed`, `task-failed`, `output-accepted`, `output-rejected`, `check`, `state-changed`, `escalation-raised`, `escalation-resolved`, `human-request`, `human-response`, `case-response`, `case-closed`.

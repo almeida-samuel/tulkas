@@ -51,6 +51,15 @@ These sections apply to all task types; adapt their content to the type. Every s
 7. **Success metrics**: how success is measured. For bugfixes, typically "the documented reproduction no longer produces the wrong result" and "nothing else in the affected area regressed". For refactors, typically "no difference is observable to users" and the reduction of the problem stated in Why.
 8. **Constraints**: business, product, timing, or resource constraints: deadlines, rules the business must follow, surfaces that must not be touched, users who must not be disrupted. For bugfixes, call out urgency and anything at risk while the defect is live. For refactors, call out what the work must not disturb. Technical constraints are discovered and recorded in the PRP, not here.
 
+## Small Cases
+
+When the task input says `size: small`, there is no spec: write the PRD **straight from the request**, and make it short (aim under about 3 KB).
+
+- **What** carries what the spec would: for a bugfix, where it happens, what the person sees, and what they should see instead; for a change, what is different afterwards.
+- **Experience**, **Success metrics**, and **Constraints** may be one line each, or "None".
+- **Requirements**: usually 1 to 5, each one sentence.
+- **Assumptions**: a section listing every open question you settled with its sensible default ("Assumed: the subject line stays as it is"), so the operator can change it at the plan approval. Ask (in `open_questions`) only what has no sensible default.
+
 ## Naming and Location
 
 1. **The PRD's name is identical to the spec's**: the case ID (`<YYYYMMDDHHMMSS>-<slug>`), copied verbatim. Do not read the clock, and do not strip the prefix and add a new one.

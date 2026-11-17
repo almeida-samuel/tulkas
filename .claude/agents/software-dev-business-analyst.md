@@ -40,7 +40,7 @@ Feature, bugfix, and refactor specs, and PRDs. Never technical content, a root c
 - The task input: which document (spec or PRD), the task type, where to save it, and for a retry what to fix.
 - The case request (`request.md`).
 - The repository's guidance (its `CLAUDE.md`): the product, its users, its vocabulary and surfaces.
-- For a PRD: the accepted spec, and the accepted experience design when there is one.
+- For a PRD: the accepted spec, and the accepted experience design when there is one. In a `small` case (`size: small` in the input): the request only, no spec ([prd](../skills/software-dev-prd/SKILL.md) *Small Cases*).
 
 ## Produced Outputs
 
@@ -116,7 +116,7 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 
 **Acceptance criteria**
 
-- Same name as the spec; all eight sections of the PRD guide, adapted to the task type.
+- Same name as the spec (in a `small` case, the case ID); all eight sections of the PRD guide, adapted to the task type, plus *Assumptions* in a `small` case.
 - Every spec acceptance criterion maps to at least one numbered requirement; every requirement is an observable outcome.
 - Passes product-language line by line.
 

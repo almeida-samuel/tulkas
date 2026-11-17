@@ -19,7 +19,7 @@ A pipeline stage is about to start.
 
 ## Consequence
 
-**Blocked** until the document it builds on is accepted: PRD ← accepted spec; experience design ← accepted spec; Engineering request ← accepted PRD; implementation ← accepted PRP approved by the operator; verification ← accepted implementation; case response with a deliverable ← Quality verdict.
+**Blocked** until the document it builds on is accepted: PRD ← accepted spec (in a `small` case, the request: no spec); experience design ← accepted spec; Engineering request ← accepted PRD; implementation ← accepted PRP approved by the operator; verification ← accepted implementation; case response with a deliverable ← Quality verdict.
 
 ## Check
 

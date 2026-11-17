@@ -17,4 +17,4 @@ Only this unit's orchestrator changes these.
 
 - Every commit and push of the case branch `tulkas/<case-id>` (created with its workspace by the dispatcher): code and case folder, as often as the work needs.
 - The case's engineering view (`state/engineering.json`): branch, workspace, PRP and implementation statuses, plan approval, commits, verification rounds.
-- With the operator's recorded approval only: the case's single pull request, and merges.
+- With the operator's recorded approval only: the case's single pull request. Never a merge: the operator merges.

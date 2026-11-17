@@ -48,7 +48,7 @@ The section `tulkas-init` adds to the guidance, filled in for the repository (pl
 This repository is run with the **Tulkas** framework, context `software-dev` (set in `.claude/tulkas.json`). Work arrives as cases, opened with `/run-case <request>`: Product turns the request into a spec and a PRD, Engineering writes the PRP and implements it, and Quality audits the result. The operator approves anything beyond the agents' authority.
 
 - **Cases**: each case lives in `docs/tulkas/cases/<case-id>/` (its `metadata.json` names the context and workspace) and is committed with the change: the spec, experience design, PRD, PRP, and audit under its `artifacts/`, plus the case's task log. They are the record of why each change was made. Code comments never cite them.
-- **Branches**: each case works on `tulkas/<case-id>`, branched from `<base branch>`, in its own worktree under `.tulkas/worktrees/` (git-ignored; or in this checkout with `/run-case --branch`), and reaches the base branch through **one pull request**. The operator approves the plan before anything is implemented. Agents commit and push only the case branch, never commit to <protected branches>, and never open a pull request or merge without the operator's approval.
+- **Branches**: each case works on `tulkas/<case-id>`, branched from `<base branch>`, in its own worktree under `.tulkas/worktrees/` (git-ignored; or in this checkout with `/run-case --branch`), and reaches the base branch through **one pull request**. The operator approves the plan before anything is implemented. Agents commit and push only the case branch, never commit to <protected branches>, never open a pull request without the operator's approval, and never merge: the operator merges.
 
 ### Repository Profile
 

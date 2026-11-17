@@ -28,7 +28,7 @@ When Engineering asks for verification, get the implementation audited (and secu
   - new or upgraded dependencies;
   - personal or sensitive data (storage, display, logs, exports).
 
-  When none apply, record that the review was skipped and why.
+  When none apply, record that the review was skipped and why. In a `small` case, run it only when the change **adds or changes** one of these (a new input, permission, outside call, secret, dependency, or way of handling sensitive data); showing data the product already holds through the usual safe output is covered by the audit, which checks it.
 
 ## Accept the Reports
 
