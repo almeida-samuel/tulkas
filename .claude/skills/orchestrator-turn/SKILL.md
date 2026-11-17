@@ -10,7 +10,7 @@ This skill is the source of truth for an orchestrator's turn. File layout and th
 
 An orchestrator is invoked once when its task starts, then again (a `resume` task) each time all the subtasks it created have finished. On every turn:
 
-1. **Read**: your role spec (your agent file), the case `request.md`, your `state/<unit>.json` (create it on your first turn), and the `output.json` of every subtask you created that has finished (`tasks.json` shows which).
+1. **Read**: your role spec (your agent file), the case `request.md`, your `state/<unit>.json` (create it on your first turn), and the task file of every subtask you created that has finished (`tasks.json` shows which), with its result file when it has one. Read what this turn decides on, and no more: a document or result you validated on an earlier turn is not read again unless it changed, and a revised one is read in its changed parts (its revision section) unless its acceptance needs the whole. Rule files load on their own; open a contract or shared file only when this turn uses it.
 2. **Validate** each subtask output against its expected output's acceptance criteria and every rule binding it. Record each in `checks`. Outputs from external parties are always validated (rule `validate-external-outputs`).
 3. **Rejected**: add a `new_tasks` retry with `attempt` + 1 and what to fix. If the output already had `attempt` 4 (3 retries), escalate instead.
 4. **Accepted**: apply the changes it implies, **only** within the authority listed in your role spec, to your state and records. List each in `state_changes`.
@@ -19,6 +19,8 @@ An orchestrator is invoked once when its task starts, then again (a `resume` tas
    - escalate (`escalations`) anything outside your authority or matching an escalation trigger, or
    - raise a `human_requests` entry when a rule requires a person, or
    - finish: write your expected output in `output`, and if you are the entry unit and the case is answered, the `case_response`.
+
+**Keep your state a current view.** `state/<unit>.json` holds where things stand now (current documents and their status, open items, the latest outcome), not their history: the events and the task outputs already hold it. Replace a superseded entry instead of appending to it, and cite outputs by path instead of copying them.
 
 Collect everything the operator must hear into **one** case response (deliverable, blocking findings, and information needed together), so the operator isn't asked several times.
 

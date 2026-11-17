@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Deviations and Open Decisions Go to the Operator
@@ -19,8 +19,8 @@ A PRP announces a deviation from the PRD, or an audit lists an open decision.
 
 ## Consequence
 
-No role settles it. It is carried to the operator as a **judgment** request through the Product Owner, with the options and what each one costs. Until answered, the affected requirement is not accepted.
+No role settles it. It is carried to the operator through the Product Owner, with the options and what each one costs: a PRP deviation inside the plan's **approval** request ([implementation-requires-approval](implementation-requires-approval.md)), an audit open decision as a **judgment** request. Until answered, the affected requirement is not accepted.
 
 ## Check
 
-Every announced deviation and open decision has a human request (kind `judgment`) and a recorded response before the case response with a deliverable.
+Every announced PRP deviation appears in an answered plan approval request, and every audit open decision has an answered human request (kind `judgment`), before the case response with a deliverable.

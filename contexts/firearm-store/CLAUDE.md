@@ -38,7 +38,7 @@ Escalation chain: specialist → department orchestrator → general manager orc
 
 ## Safety Boundaries
 
-Not negotiable. They are defined in two rules, which load automatically whenever an agent works on files under `data/firearm-store/`:
+Not negotiable. They are defined in two rules, which load automatically whenever an agent works on files under `docs/tulkas/`:
 
 - [mock-data-only](../../.claude/rules/firearm-store/mock-data-only.md): all data is mock; no real transactions, regulatory determinations, physical testing by AI, or live services.
 - [fictional-background-checks](../../.claude/rules/firearm-store/fictional-background-checks.md): the government service holds fictional criminal records only; results are never eligibility determinations.
@@ -59,7 +59,7 @@ The organizational map (draft) lives in separate files. Keep this file short; pu
 - `units/<unit>.md`: one per department: orchestrator, members, and the records it owns.
 - Roles: each non-human role is a Claude Code agent, `.claude/agents/firearm-store-<role-id>.md`, holding its full spec and expected outputs. Human roles are in `human-roles/`.
 - `interaction-contracts/<contract-id>.md`: requester, provider, input, expected output, outcomes, and rules.
-- Rules: `.claude/rules/firearm-store/<rule-id>.md`: enforced constraints: scope, the roles each binds, condition, consequence, and the check. Path-scoped to `data/firearm-store/**`, so Claude Code loads them whenever an agent touches case data or records.
+- Rules: `.claude/rules/firearm-store/<rule-id>.md`: enforced constraints: scope, the roles each binds, condition, consequence, and the check. Path-scoped to `**/docs/tulkas/**`, so Claude Code loads them whenever an agent touches case data or records.
 - Guides: each is a Claude Code skill, `.claude/skills/firearm-store-<guide-id>/SKILL.md` (not enforced).
 - Expected outputs: inside each role's agent file. The case response and human request are in the `orchestrator-turn` skill.
 - `test-scenarios.md`: `/run-case` commands with expected results, and an audit checklist for each run.
@@ -72,6 +72,7 @@ Conventions used across these files:
 - Every sale and purchase is reported to both finance and inventory (`transaction-report`). A sale counts as completed, and is reported, only when payment is `paid` **and** the order is `delivered`.
 - Any gun with a full-auto mode requires the customer's address (compliance requirement).
 - The operator delegates nothing to the general manager at the start; every exception reaches the operator.
+- No case branch: cases change no repository, so they run in the current checkout (workspace mode `none`) and nothing is committed by the agents.
 - Each agent file lists its guides (`skills:` frontmatter and Guides section), its binding rules (Rules section and "Shared Files to Read", as a fallback to automatic loading), and the contracts it uses. Rule files list the roles they bind. Keep both sides in sync when adding or renaming a role, guide, rule, or contract.
 - All of these are Markdown with a fixed structure for now; the real file formats are still an open framework question.
 - Each fact lives in one file: edit it there, and keep the structure consistent with sibling files. There are no generator scripts.

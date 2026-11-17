@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Agents Prepare the Environment Themselves
@@ -22,7 +22,7 @@ A role with the shell finds the case's environment not ready (the environment is
 **Allowed on the role's own initiative, without asking the operator**, when every point holds:
 
 - It is a setup command the repository's guidance documents, or the tool's standard form for what the repository declares (e.g., installing exactly the dependencies in its manifest and lockfile).
-- It runs inside the environment the guidance requires (container, virtual environment, toolchain manager), from the case worktree.
+- It runs inside the environment the guidance requires (container, virtual environment, toolchain manager), from the case workspace.
 - It is **local and additive**: start the documented environment; install declared dependencies; create, load, or migrate a **test** database; build assets or caches the test run needs.
 
 **Never without the operator's approval** (an approval request through the Product Owner): installing anything on the host or changing a global toolchain; dropping, resetting, or migrating any database that is not a test database (development data, shared data); stopping, removing, or rebuilding containers or services other than starting the documented ones; changing credentials or secrets; anything that reaches outside the machine except fetching declared dependencies from their registries.

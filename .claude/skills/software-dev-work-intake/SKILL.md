@@ -31,6 +31,7 @@ Every case is exactly one of three task types. Decide which from what the reques
 - A refactor that changes anything users can see is not a refactor: it is a feature (or contains one). Say so.
 - A request that mixes several work items (two features, a fix plus a refactor) is **one case per item**. Ask the operator to split it, proposing the split; don't run several items through one pipeline.
 - If the type is genuinely ambiguous, ask the operator (judgment request) with the options and what each one leads to.
+- **Size the item.** One case should fit one PRD of up to about 25 requirements and one round of implementation. A request bigger than that ("refactor every screen") is several items: propose the split now, in the same request as any other question, rather than after the documents grew.
 
 ## 2. Check the Repository Is Ready
 
@@ -41,8 +42,8 @@ The technical roles depend on the repository's own guidance (normally its `CLAUD
 1. **Spec**: Business Analyst, with the spec guide for the type.
 2. **Experience design**: UX Designer, only when the work adds or changes something people see or do (screens, messages, emails, flows). Not for most refactors, and not for bugfixes whose correct behavior is already obvious from the spec. It can run in parallel with the PRD once the spec is accepted, and the PRD's Experience section then draws on it.
 3. **PRD**: Business Analyst, from the accepted spec (and the experience design, when there is one).
-4. **Engineering request**: once the PRD is accepted, ask Engineering for the change through its contract, passing the PRD (and the experience design).
-5. **Publishing**: accepted product documents stay in the case's `artifacts/` until Engineering creates the case branch; Engineering then publishes them to `docs/tulkas/` and commits them with the change.
+4. **Engineering request**: once the PRD is accepted, ask Engineering for the change through its contract, passing the PRD (and the experience design). Engineering comes back with `plan-ready` before implementing anything.
+5. **Plan approval**: send the operator one **approval** request for the plan ([implementation-requires-approval](../../rules/software-dev/implementation-requires-approval.md)): the PRD in brief (what changes for whom, requirement count), the PRP's approach, files, tasks, and tests in a few lines, every deviation with its options, and the paths of the full documents. Options: approve; change, with notes; stop. Put any other open question in the same request.
 6. **Case response**: when Engineering returns, with Quality's verdict, send the deliverable, the blocking findings, or the information still needed.
 
 ## 4. Accept Product Documents
@@ -62,6 +63,26 @@ Collect into **one** request, rather than asking several times:
 - the task type, when ambiguous;
 - a split, when the request holds several work items;
 - scope trade-offs Engineering raises later (e.g., a requirement that costs far more than its value);
-- approval to push the case branch, open a pull request, or merge, when the work is delivered.
+- approval to open the case's pull request, or to merge, when the work is delivered.
 
 Never answer a product question yourself by guessing what the operator would want. A recorded assumption is acceptable only when the question is minor and the document says it is an assumption.
+
+**Ask early, ask once.** Every operator answer that changes a document sets off a revision downstream, so gather the questions before the documents multiply: ask the business analyst to list, with the spec, every open product question it can foresee for the PRD as well, and send them all in the first request. A question that only surfaces later still goes with everything else open at that moment.
+
+## 6. Apply an Operator Answer
+
+An answer that changes product documents is applied in **one revision pass**, not one stage at a time:
+
+- One task per specialist whose documents change, in parallel: the business analyst revises the spec and the PRD together in one task; the UX designer revises the experience design, if it changes. Each revises in place with a revision section (see *Revising an artifact* in the `case-protocol` skill), and the input names only the answer and what it changes.
+- One acceptance turn for all of them, reading the revision sections.
+- If Engineering already has the work, one `engineering-change` `continue` carrying the answers and the revised documents together.
+
+## 7. After Delivery
+
+The case stays open for changes **until its branch is merged**. After the deliverable is sent, the operator may ask for more on the same case: fix the open notes, adjust something, or change what was agreed.
+
+- A change to what was agreed goes through the product documents first: one revision pass (§6), then one `engineering-change` `continue` carrying the change and the revised documents. Engineering plans it, and a changed PRP comes back for approval (§3.5) before it is implemented.
+- Fixing open notes, or an adjustment inside the agreed PRD, goes straight to Engineering in one `continue`.
+- Either way Engineering adds commits to the same branch (updating the case's pull request, if open) and returns `delivered` again; send the new deliverable.
+- Once the branch is merged, the case is done: anything further is a **new case**. Answer with an `information-needed` case response proposing it, with a one-line request the operator can open it with.
+- Quality's *outside this case* observations are never worked on in this case; list them in the deliverable so the operator can open cases for them.

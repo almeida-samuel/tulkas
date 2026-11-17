@@ -21,6 +21,7 @@ This file covers the **framework**. The case protocol (how agents read and write
 - [Architecture and Technology Stack](#architecture-and-technology-stack)
   - [Runtime](#runtime)
   - [Persistence](#persistence)
+  - [Workspace](#workspace)
   - [Execution Model](#execution-model)
 - [Code Style & Patterns](#code-style--patterns)
   - [Conventions](#conventions)
@@ -63,7 +64,7 @@ Status: **1.0 beta**. This section defines vocabulary and responsibilities only.
 | **Framework** | The definitions of the concepts in this section: what the operator, a unit, role, contract, rule, guide, expected output, case, task, event, and template are, plus authority, escalation, and the human boundary |
 | **Context definition** | Concrete instances of those concepts for one context: its units, roles, interaction contracts, rules, guides, expected outputs, and templates |
 | **Runtime adapter** | Binding framework concepts and context definitions to one agent platform. In this POC, the Claude Code adapter (`.claude/`) also *holds* the role, guide, and protocol definitions |
-| **Case data** | Mock state produced while running a context: `data/<context>/cases/<case-id>/` |
+| **Case data** | State produced while running a context: `docs/tulkas/cases/<case-id>/`, with the context named in its `metadata.json` |
 
 Context definitions depend on the framework, and case data depends on its context. Because roles and guides live in `.claude/`, the context's shared files (units, contracts, rules, organization) link to the agent and skill files, and agents read the context's shared files.
 
@@ -161,15 +162,15 @@ The framework's concepts don't depend on any agent platform. For this POC the on
 - `.claude/skills/<context>-<guide-id>/`: one skill per guide, holding the full guide.
 - `.claude/skills/case-protocol/`, `run-case/`, `orchestrator-turn/`: the case protocol, the dispatcher loop, and the orchestrator turn (including the case response and human request).
 - `.claude/skills/tulkas-init/`: prepares a repository for a context: audits its `CLAUDE.md` against the context's `repository-requirements.md` (if it has one), proposes a refactor, and applies it once the operator approves.
-- `.claude/rules/<context>/`: one rule file per context rule, path-scoped to `data/<context>/**` so it loads whenever an agent touches that context's case data or records.
+- `.claude/rules/<context>/`: one rule file per context rule, path-scoped to `**/docs/tulkas/**` so it loads whenever an agent touches case data or records. The path no longer names the context, so each rule says which roles it binds and other roles ignore it.
 
 Shared context files (units, contracts, organization, mock data, human roles) stay in `contexts/<context>/`. Moving to another runtime later means converting the `.claude/` files. `runtimes/claude-code/README.md` describes the mapping.
 
-**Deployment.** This repository is the source. `scripts/deploy.sh [context...]` copies the framework skills and the chosen contexts (all by default) to `~/.claude` (agents, skills, and rules in their usual folders; shared context files in `~/.claude/tulkas/contexts/`), rewriting links to absolute paths. It records the deployed version and file list in `~/.claude/tulkas/`, so a redeploy replaces the previous one cleanly. Bump `VERSION` for each release. Each repository that uses the framework picks its context in `.claude/tulkas.json` (`{"context": "<context>"}`) and keeps its case data in `data/<context>/`.
+**Deployment.** This repository is the source. `scripts/deploy.sh [context...]` copies the framework skills and the chosen contexts (all by default) to `~/.claude` (agents, skills, and rules in their usual folders; shared context files in `~/.claude/tulkas/contexts/`), rewriting links to absolute paths. It records the deployed version and file list in `~/.claude/tulkas/`, so a redeploy replaces the previous one cleanly. Bump `VERSION` for each release. Each repository that uses the framework picks its context in `.claude/tulkas.json` (`{"context": "<context>", "workspace": "worktree | branch", "base": "<branch>"}`; only `context` is required) and keeps its case data in `docs/tulkas/`.
 
 ### Persistence
 
-The local filesystem is the database, kept as inspectable folders. Layout (everything exists except `data/`, which is created by mock data and by running cases):
+The local filesystem is the database, kept as inspectable folders. Layout (`docs/tulkas/` holds this repository's mock data and test cases; in a repository using the framework it is created by running cases):
 
 ```text
 CLAUDE.md                   # framework guidance (this file)
@@ -184,27 +185,32 @@ contexts/
     human-roles/            # human roles (no agent)
     interaction-contracts/
     templates/              # not written yet
-data/
-  <context>/
-    records/<unit>/         # shared records, changed only by the unit's orchestrator
-    external/<party>/       # mock data behind each external party
-    cases/
-      <case-id>/
-        request.md
-        tasks.json
-        events.jsonl
-        state/<unit>.json
-        tasks/<task-id>/{input,output}.json
-        human/
-        documents/
-        artifacts/
+docs/tulkas/
+  records/<unit>/           # shared records, changed only by the unit's orchestrator
+  external/<party>/         # mock data behind each external party
+  cases/
+    <case-id>/              # inside the case's workspace (see Workspace)
+      metadata.json         # context and workspace
+      request.md
+      tasks.json
+      events.jsonl
+      state/<unit>.json
+      tasks/<task-id>.json  # input and response of one task
+      tasks/<task-id>.result.json  # long expected output, when needed
+      human/
+      documents/
+      artifacts/
 runtimes/
   claude-code/README.md     # how .claude/ maps to the framework
 .claude/
   agents/                   # one per non-human role: spec + expected outputs
   skills/                   # guides, case-protocol, run-case, orchestrator-turn (+ case response, human request)
-  rules/<context>/          # context rules, path-scoped to data/<context>/**
+  rules/<context>/          # context rules, path-scoped to **/docs/tulkas/**
 ```
+
+### Workspace
+
+A context whose cases change the repository they run in declares a **case branch** (named from the case ID). The dispatcher creates it when the case opens, in one of two modes: `worktree` (default: the branch is checked out in its own worktree under `.tulkas/worktrees/`, and the operator's checkout is untouched) or `branch` (the branch is checked out in the operator's clean checkout). The mode comes from `/run-case --worktree|--branch`, else `.claude/tulkas.json`. The case folder lives inside the workspace, so it travels with the case branch; how and when it is committed is up to the context. A context with no case branch keeps its cases in the current checkout. Details: the `case-protocol` skill.
 
 ### Execution Model
 
@@ -212,14 +218,15 @@ runtimes/
 - An invocation reads the case files, does its task, writes outputs and events, and exits.
 - When the operator opens a case, determine which tasks can run in parallel and which depend on others. Independent tasks run in parallel; dependent tasks wait for prerequisites.
 - Deciding which tasks are ready follows declared dependencies and task states only. It is performed by an agent following strict instructions, not by code, and each decision is recorded as an event so it can be audited.
-- Rule checks and acceptance-criteria checks are also performed by agents, and each result is recorded as an event.
+- Rule checks and acceptance-criteria checks are also performed by agents. Each result is recorded in the task's output; failed checks are also recorded as events, and passed ones are counted in the task's completion event.
+- Agents read only what a step needs: task outputs stay small, long results and documents live in their own files and are referenced by path, so the dispatcher's context does not grow with every task.
 
 ## Code Style & Patterns
 
 ### Conventions
 
 - Framework concepts stay context-agnostic. Anything specific to a context (vocabulary, units, roles, contracts, rules, guides, expected outputs, templates) belongs in `contexts/<context>/`, never in the framework or this file.
-- Case data lives in `data/<context>/`. Nothing references a specific operator.
+- Case data lives in `docs/tulkas/`. Nothing references a specific operator.
 - Each piece of knowledge lives in exactly one file: roles, guides, rules, and protocol in `.claude/`; shared definitions in `contexts/<context>/`. Never copy content between them; link instead.
 
 ## Development Workflow

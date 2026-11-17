@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Validate External Outputs

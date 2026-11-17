@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Pipeline Documents Share the Case ID
@@ -19,7 +19,7 @@ A spec, experience design, PRD, PRP, or audit is returned for acceptance.
 
 ## Consequence
 
-Its name must be the case ID (`<YYYYMMDDHHMMSS>-<slug>`). The only exception is a document superseding an earlier one: same slug, newer timestamp. Otherwise it is **rejected**.
+Its name must be the case ID (`<YYYYMMDDHHMMSS>-<slug>`), saved under `artifacts/<kind>/` in the case folder. A revision within the case edits the same file. The only exception is a document superseding one from another case: same slug, newer timestamp. Otherwise it is **rejected**.
 
 ## Check
 

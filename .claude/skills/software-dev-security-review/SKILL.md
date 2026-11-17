@@ -17,6 +17,8 @@ Guides shape how a role works; they are not enforced. Enforced constraints are r
 
 Review the change for security gaps: what an attacker, a curious user, or an honest mistake could make it do that it must not. **Report; don't fix.** Fixes are proposed and applied, once approved, by the developer.
 
+Stay inside the case: review what the change introduces or exposes. A weakness that predates the change and that the change does not reach is listed in one line under **Outside this case**, with no severity and no further digging; it never affects the verdict.
+
 ## Repository Guidance
 
 This guide assumes no language, framework, or tool. The repository's guidance (normally its `CLAUDE.md`) names the security scanner, the dependency audit, how commands run, and any security rules of its own (how records are addressed, where outside calls may happen, how secrets are stored). Read it first; take every command from it.

@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Product Documents Contain No Technical Content
@@ -23,4 +23,4 @@ The Product Owner checks it line by line against the [product-language](../../sk
 
 ## Check
 
-The acceptance event for the document records a `product-language` check with result `passed`, and the document contains no fenced code blocks and no inline code.
+The Product Owner's checks in the task that accepted the document include a `product-language` check with result `pass`, and the document contains no fenced code blocks and no inline code.

@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/firearm-store/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Used-Item Offer Ceiling

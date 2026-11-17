@@ -1,6 +1,6 @@
 ---
 name: case-protocol
-description: The framework's case protocol - case folder layout, who may write which file, task fields, the role output format, and events. Preloaded by every role agent; read by the run-case dispatcher.
+description: The framework's case protocol - case folder layout, workspace, who may write which file, task fields, the task file and role response, and events. Preloaded by every role agent; read by the run-case dispatcher.
 user-invocable: false
 ---
 
@@ -15,23 +15,45 @@ Status: **draft**. How agents read and write a case. This skill is the source of
 
 ## Case Folder
 
+Everything the framework writes in a repository lives under `docs/tulkas/`. The context is not part of the path: each case names it in its `metadata.json`.
+
 ```text
-data/<context>/cases/<case-id>/
-  request.md                # the operator's case request (written by the dispatcher)
+docs/tulkas/cases/<case-id>/
+  metadata.json             # context, workspace, opening time (dispatcher only)
+  request.md                # the operator's case request (dispatcher only)
   tasks.json                # task list and statuses (dispatcher only)
   events.jsonl              # append-only event log (dispatcher only)
   state/<unit>.json         # the unit's view of the case (that unit's orchestrator only)
-  tasks/<task-id>/
-    input.json              # what the task must do (dispatcher, from the creating output)
-    output.json             # the task's output (the assigned role only)
+  tasks/<task-id>.json      # one file per task: its input (dispatcher) and its response (the assigned role)
+  tasks/<task-id>.result.json  # the full expected output, only when it is long (the assigned role)
   human/<request-id>.json   # human request or operator answer to a case response, with the recorded response (dispatcher); IDs HR-001, HR-002, ...
   documents/                # input documents (read-only for agents)
   artifacts/                # produced artifacts (the role that produces them)
 ```
 
-Shared records live in `data/<context>/records/<unit>/` and are changed **only** by that unit's orchestrator. External parties' mock data lives in `data/<context>/external/<party>/` and is read **only** by that external party.
+Shared records live in `docs/tulkas/records/<unit>/` and are changed **only** by that unit's orchestrator. External parties' mock data lives in `docs/tulkas/external/<party>/` and is read **only** by that external party.
 
-**One writer per file.** That is what makes parallel tasks safe.
+`metadata.json`:
+
+```json
+{
+  "case_id": "20261117120000-short-slug",
+  "context": "software-dev",
+  "opened_at": "2026-11-17T12:00:00Z",
+  "workspace": {"mode": "worktree | branch | none", "branch": "tulkas/20261117120000-short-slug", "base": "main", "base_commit": "<sha>", "path": ".tulkas/worktrees/20261117120000-short-slug"}
+}
+```
+
+**Workspace.** A context whose cases change the repository declares a **case branch** in its `CLAUDE.md` (its name, built from the case ID only). The dispatcher then creates it when it opens the case, in one of two modes:
+
+- `worktree` (default): the case branch is checked out in its own worktree, `.tulkas/worktrees/<case-id>`; the operator's checkout is untouched, and several cases can run at once.
+- `branch`: the case branch is checked out in the operator's own checkout, which must be clean; one case at a time.
+
+The case folder lives inside the workspace (`<workspace path>/docs/tulkas/cases/<case-id>/`), so it travels with the case branch. A context without a case branch uses mode `none`: the case folder lives in the current checkout. All paths in a case are relative to the workspace; the dispatcher gives every role the case folder's path.
+
+**One writer per file.** That is what makes parallel tasks safe. A task file has two writers in turn, never at once: the dispatcher writes it before the role starts, and the role fills its `response` once; the dispatcher never writes it again.
+
+**Revising an artifact.** When a task revises an artifact that already exists in the case (after a rejection, an operator answer, or a new round), edit it in place and add a short `Revision N` section at its end: what changed, by section or item ID, and why (the task, finding, or human request behind it). Leave unchanged parts as they are; never rewrite the whole artifact or copy it under a new name. Readers can then read only the revision section to see what moved.
 
 ## Task
 
@@ -50,14 +72,25 @@ An entry in `tasks.json`:
 | `resumes` | For `resume` tasks: the ID of the original task this turn continues (e.g., `T001`) |
 | `continued_by` | On a `waiting` task once it is resumed: the ID of the `resume` task that continues it |
 
-## Role Output
+## Task File
 
-Every role writes `tasks/<task-id>/output.json`:
+`tasks/<task-id>.json`:
 
 ```json
 {
   "task_id": "T004",
   "role": "stock-manager",
+  "input": { },
+  "response": null
+}
+```
+
+The dispatcher writes `task_id`, `role`, and `input` (the `input` of the `new_tasks` entry that created the task) with `"response": null`, then invokes the role. The role replaces `null` with its response, once, and never changes `input`.
+
+## Role Response
+
+```json
+"response": {
   "status": "completed | failed",
   "output": { },
   "new_tasks": [ ],
@@ -70,21 +103,26 @@ Every role writes `tasks/<task-id>/output.json`:
 }
 ```
 
-- `output`: the expected output, with the fields its expected-output definition lists.
+- `output`: the expected output, with the fields its expected-output definition lists. When it is long (more than about 3 KB: long lists, findings, run logs, records), write it whole to `tasks/<task-id>.result.json` and keep in `output` only `{"result": "tasks/<task-id>.result.json"}` plus the few fields the requester decides on (an outcome, a verdict, a document path, counts). Documents go to `artifacts/`, as the expected output says; never copy a document into `output`.
 - `new_tasks` (orchestrators only): `{role, type, contract?, input, depends_on?}`. Specialists in the orchestrator's own unit, or the provider orchestrator / external party of a contract the orchestrator may request.
 - `state_changes` (orchestrators only): changes it **already applied** to its `state/<unit>.json` or its unit's records, each `{file, field, from, to, source}`.
 - `escalations` (orchestrators only): `{to, reason, evidence}`; `to` is the next level in the reporting line.
 - `human_requests` (orchestrators only): in the shape of the Human Request in the `orchestrator-turn` skill.
 - `case_response` (entry-unit orchestrator only): in the shape of the Case Response in the `orchestrator-turn` skill.
-- `checks`: every rule or acceptance check performed: `{check, target, result: pass|fail, detail}`.
+- `checks`: every rule or acceptance check performed: `{check, target, result: pass|fail, detail}`. An orchestrator records its decision on each subtask output as one check named `acceptance`, with the subtask's ID as `target` (`pass` = accepted, `fail` = rejected). Keep `detail` to one line (a result line, a `file:line`, the reason for a fail); longer evidence belongs in the result file or the document.
 
-Specialists and external parties leave every list empty except `checks`, and never write anything but their `output.json`.
+**Keep the response small** (aim under 4 KB). The dispatcher reads it after every task, so every byte in it is paid again in the dispatcher's context for the rest of the case. `summary` is one line.
+
+**Task inputs reference, they don't copy.** A `new_tasks` input names the paths of documents, task files, and results the task needs, and states only what is new for this task (what to fix, the operator's answer). Never paste a document or an earlier response into an input.
+
+Specialists and external parties leave every list empty except `checks`, and never write anything but their task file's `response` (and its result file).
 
 ## Rules for Every Role Agent
 
-- Your task is `data/<context>/cases/<case-id>/tasks/<task-id>/`. Read its `input.json` and the case's `request.md`.
-- Never write `tasks.json`, `events.jsonl`, another task's files, or anything another role owns.
-- If the input is insufficient, still write `output.json`: say what is missing in `output` and `summary`; don't invent data.
+- The dispatcher gives you the case folder and your task ID. Read your task file's `input` and the case's `request.md`.
+- Your context's rules load on their own when you work in the case folder. Open a rule, contract, or other shared context file only when your task needs its exact wording, and read the documents your input names only as far as your task needs them.
+- Never write `metadata.json`, `tasks.json`, `events.jsonl`, another task's file, or anything another role owns.
+- If the input is insufficient, still write your response: say what is missing in `output` and `summary`; don't invent data.
 - If the mock data you need doesn't exist, report it; don't make it up.
 
 ## Event

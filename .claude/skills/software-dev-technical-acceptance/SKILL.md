@@ -19,14 +19,16 @@ Run the engineering half of the pipeline: get a PRP from the architect, get it i
 
 ## Plan
 
-0. **Case branch and worktree**: create the branch `<type>/<case-id>` (`feature/`, `bugfix/`, or `refactor/`) from the branch the repository's guidance names as the base (by default the default branch), checked out in its own worktree (by default `.tulkas/worktrees/<case-id>`, git-ignored). Every engineering and quality task of the case works there. Never work in the operator's own checkout. Then make sure the worktree can run the repository's suites: start the documented environment, install declared dependencies, and prepare the test database, as [environment-setup](../../rules/software-dev/environment-setup.md) allows.
+0. **Environment**: the dispatcher already created the case branch (`tulkas/<case-id>`) and its workspace (see the case's `metadata.json`); every engineering and quality task of the case works there. Make sure the workspace can run the repository's suites: start the documented environment, install declared dependencies, and prepare the test database, as [environment-setup](../../rules/software-dev/environment-setup.md) allows.
 1. **PRP**: Software Architect, from the accepted PRD (and experience design, when there is one).
-2. **Accept the PRP** (below). Deviations it announces from the PRD go back to Product before implementation, because they change what was agreed.
-3. **Implementation**: Software Developer, from the accepted PRP.
-4. **Accept the implementation** (below), then **commit** it on the case branch ([case-branch-only](../../rules/software-dev/case-branch-only.md)), with a message that states the change in product terms. In the same commit, publish the accepted pipeline documents to `docs/tulkas/<kind>/<case-id>.md`: the spec (`features`, `bugfixes`, or `refactors`), the experience design (`experience`), the PRD (`prds`), and the PRP (`prps`).
-5. **Verification**: ask Quality through its contract, passing the PRD, the PRP, and the implementation output.
-6. **Fixes**: when Quality's verdict has blocking gaps, create a fix task for the developer with the findings, then ask Quality to verify again. Each round counts as a retry.
-7. **Return** to Product: the implementation output, the commits on the case branch, and Quality's verdict. Pushing, opening a pull request, and merging are never yours to do on your own: they need the operator's approval ([push-merge-requires-operator](../../rules/software-dev/push-merge-requires-operator.md)).
+2. **Accept the PRP** (below), then return `plan-ready` to Product, with every deviation the PRP announces and its options. Nothing is implemented until the operator approves the plan ([implementation-requires-approval](../../rules/software-dev/implementation-requires-approval.md)).
+   - The operator's answer comes back in one `engineering-change` `continue`. `approved`: go on. `change`: apply every note in one pass (one PRP revision task carrying the notes and any revised product documents, then one acceptance turn on its revision section) and return `plan-ready` again. `stop`: return without implementing.
+3. **Implementation**: Software Developer, from the approved PRP.
+4. **Accept the implementation** (below), then **commit** it on the case branch with the case folder's current state ([case-branch-only](../../rules/software-dev/case-branch-only.md)), with a message that states the change in product terms, and push the branch. Commit as often as the work needs; never rewrite the branch's history.
+5. **Verification**: ask Quality through its contract, passing the PRD, the PRP, and the implementation task file.
+6. **Fixes**: when Quality's verdict has blocking gaps, create a fix task for the developer with the findings, accept it, commit and push it, then ask Quality to verify again (the round diffs against the commit it last verified). Each round counts as a retry. Quality's *outside this case* observations are not fixed here; pass them on to Product.
+7. **Return** to Product: commit the accepted audit and push, then return the branch, its commits, the pull request (if open), Quality's verdict, and the open notes ([one-pull-request-per-case](../../rules/software-dev/one-pull-request-per-case.md)). Opening the case's pull request and merging need the operator's approval ([push-merge-requires-operator](../../rules/software-dev/push-merge-requires-operator.md)); pushing the case branch does not.
+8. **Changes on the same case**: until the case branch is merged, Product may send a `continue` with changes to the delivered work (open notes to fix, or a change to what was agreed, with the revised product documents). Plan it like the first pass but only for the change: a PRP revision when the plan changes (approved again by the operator), the implementation, a verification round scoped to the change (diffed against the last verified commit), and new commits pushed to the same branch, which updates the case's pull request.
 
 ## Accept the PRP
 
@@ -42,6 +44,7 @@ Run the engineering half of the pipeline: get a PRP from the architect, get it i
 
 - Every task and checklist item of the PRP is done, or its absence is explained.
 - **Result lines are quoted** for every suite and check the developer ran. A claim of "tests pass" with no result line counts as not run.
+- **Don't re-run the developer's suites.** Acceptance checks the report, the diff, and the result lines; Quality runs the suites independently in its round. Run a command yourself only when a result line is missing, implausible (counts that don't match the change), or contradicted by the diff, and then the narrowest command that settles it, never the full suites. The same holds for the PRP: spot-check by reading the code, not by running it.
 - For a bugfix, the regression test is reported failing before the fix and passing after.
 - For a refactor, the full suite result is reported, and no public behavior or interface changed.
 - Generated files hold only this task's changes; anything foreign was removed and reported.

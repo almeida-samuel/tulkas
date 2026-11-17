@@ -1,6 +1,6 @@
 # Firearm Store Mock Data
 
-Everything the firearm-store context needs to be mocked. Nothing here is real data, and nothing connects to a live service. **Owner** is the only role allowed to change the data (an orchestrator, or an external party for its own data). Files are JSON under `data/firearm-store/`. External party folders are named after the party's role ID. **Created** marks files that exist; the others are still to be written (purchasing and technical-services data aren't needed until those scenarios are tested).
+Everything the firearm-store context needs to be mocked. Nothing here is real data, and nothing connects to a live service. **Owner** is the only role allowed to change the data (an orchestrator, or an external party for its own data). Files are JSON under `docs/tulkas/`. External party folders are named after the party's role ID. **Created** marks files that exist; the others are still to be written (purchasing and technical-services data aren't needed until those scenarios are tested).
 
 ## Shared Records (owned by units)
 

@@ -33,7 +33,6 @@ Verification rounds: the implementation audit, the security review, and the verd
 - Ask the QA developer for the implementation audit and, when the change triggers it, the security reviewer for a security review, in parallel.
 - Accept or reject their reports.
 - Issue the verdict of the round (`pass`, `pass-with-notes`, `fail`).
-- Write the accepted audit to `docs/tulkas/audits/<case-id>.md` in the case worktree (Engineering commits it).
 - Ask the External Provider through `provider-inquiry`.
 - Respond to `verification`.
 
@@ -45,13 +44,13 @@ Not authorized:
 
 ## Required Inputs
 
-- The `verification` request: round, branch, worktree, commit, and the paths of the spec, experience design, PRD, PRP, and implementation output.
+- The `verification` request: round, branch, workspace, commit, and the paths of the spec, experience design, PRD, PRP, and implementation output.
 - Outputs of the QA developer and security reviewer; External Provider answers.
 
 ## Produced Outputs
 
 - Quality record (case state).
-- The accepted audit document in the worktree.
+- The accepted audit (`artifacts/audits/<case-id>.md` in the case folder).
 - `verification` response with the verdict.
 
 Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) below.
@@ -90,9 +89,9 @@ Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) bel
 
 ## Working Paths
 
-- Case folder: `data/software-dev/cases/<case-id>/`, in the operator's checkout. Tell the QA developer to save the audit to `artifacts/audits/<case-id>.md` there; on acceptance, copy it to `docs/tulkas/audits/<case-id>.md` in the worktree.
-- Worktree and branch: pass the ones from the `verification` request in every task input.
-- Check that probes were deleted by searching the worktree for the probe files each report names.
+- Case folder: `docs/tulkas/cases/<case-id>/` inside the case workspace. Tell the QA developer to save the audit to `artifacts/audits/<case-id>.md` there (later rounds add to it); it is committed with the case folder, so there is nothing to copy.
+- Workspace and branch: pass the ones from the `verification` request in every task input.
+- Check that probes were deleted by searching the workspace for the probe files each report names.
 
 ## Expected Outputs
 
@@ -109,34 +108,19 @@ Contract requests and responses follow their contract files; only outputs specif
 | `case_id` | string | yes | Case the output belongs to. |
 | `rounds` | list | yes | `{round, commit, audit_task, security_task or skip_reason, verdict, blocking_findings}`. |
 | `security_review_triggers` | list | yes | Which triggers of the verification-verdict guide the change hit, or none. |
-| `open_decisions` | list | yes | Deviations the PRP announced and left to the requester. |
+| `open_decisions` | list | yes | Questions the approved plan did not settle: deviations from the approved PRP found in the implementation, or decisions the plan left open. Deviations the operator already answered in the plan approval are cited with that request, never raised again. |
 
 **Acceptance criteria**
 
 - The verdict of every round follows the guide's verdict table from the accepted reports only.
 - A finding repeated across rounds keeps its ID, so 3 rounds on the same findings can be counted.
 
-## Shared Files to Read Before Acting
-
-1. `contexts/software-dev/CLAUDE.md`
-2. `contexts/software-dev/interaction-contracts/verification.md`
-3. `contexts/software-dev/interaction-contracts/provider-inquiry.md`
-4. `.claude/rules/software-dev/results-verified-by-running.md`
-5. `.claude/rules/software-dev/probes-deleted.md`
-6. `.claude/rules/software-dev/bugfix-requires-regression-test.md`
-7. `.claude/rules/software-dev/refactor-preserves-behavior.md`
-8. `.claude/rules/software-dev/delivery-requires-verification-pass.md`
-9. `.claude/rules/software-dev/deviations-go-to-operator.md`
-10. `.claude/rules/software-dev/case-id-naming.md`
-11. `.claude/rules/software-dev/validate-external-outputs.md`
-12. `.claude/rules/software-dev/environment-setup.md`
-
 ## Boundaries
 
-- You are the only role that changes state for Quality: `state/quality.json` and the audit document in the worktree. Change nothing outside your authority.
+- You are the only role that changes state for Quality: `state/quality.json`. Change nothing outside your authority.
 - Follow the `orchestrator-turn` skill: validate every subtask output, retry up to 3 times, then escalate.
 - Delegate by listing `new_tasks` in your output. Never audit or review yourself, and never call other agents.
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json`, `state/quality.json`, and the audit in the worktree, in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` and `state/quality.json`, in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 
 ## When Done

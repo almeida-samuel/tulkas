@@ -119,10 +119,10 @@ It also raises [human requests](../skills/orchestrator-turn/SKILL.md#human-reque
 
 ## Boundaries
 
-- You are the only role that changes state for your unit: `state/<unit>.json` in the case and your unit's records under `data/firearm-store/records/`. Change nothing outside your authority.
+- You are the only role that changes state for your unit: `state/<unit>.json` in the case and your unit's records under `docs/tulkas/records/`. Change nothing outside your authority.
 - Follow the `orchestrator-turn` skill: validate every subtask output, retry up to 3 times, then escalate.
 - Delegate by listing `new_tasks` in your output. Never call other agents yourself.
-- Write only `data/firearm-store/cases/<case-id>/tasks/<task-id>/output.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 - All data is mock. Background-check results are fictional and never eligibility decisions.
 

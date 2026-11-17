@@ -23,11 +23,23 @@ Audit the work implemented for a case against the documents that planned it, rep
 
 This guide assumes no language, framework, or tool. Everything specific to the repository comes from its own guidance, normally its `CLAUDE.md`: how and where commands run, the test, system-test, lint, and security-scan commands, what CI runs, the conventions the code must follow, and any mechanical checks worth running on every audit. Read it before you start. **Take every command from the repository, never from memory.** If a documented command does not exist, say so in the report rather than substituting your own.
 
+## Stay Inside the Case
+
+The audit answers one question: **does this change do what its PRD requires, without breaking anything?** A finding belongs in it only when it is about:
+
+- the change itself: the diff, and what the diff's new or changed code paths reach;
+- a PRD requirement: implemented, partially, missing, or deviated;
+- a regression: something the change broke that worked at the base.
+
+Everything else is out of scope, however real: defects that predate the change and that no PRD requirement depends on, code the change does not touch, tidying the PRP did not ask for, and general improvements. Don't investigate them, don't give them a severity, and never let them affect the verdict. If you noticed one in passing, list it in one line under **Outside this case** at the end of the audit, so the operator can open its own case; that is all.
+
+Before writing up a finding, ask: *would this finding disappear if the change were reverted?* If yes (or a PRD requirement needs it), it belongs to the case. If it would still be there, it is outside the case unless a PRD requirement depends on it.
+
 ## 1. Assemble the Documents and the Change Surface
 
 Each case produces up to three planning documents sharing one name (the case ID): the **spec** (acceptance criteria and the decisions behind them), the **PRD** (numbered requirements, scope boundaries, success metrics, constraints), and the **PRP** (the only technical document: files, decisions `D-n`, the ordered task list, the test plan, constraints, open questions, checklist). Finding one finds the others. A document whose timestamp does not match its siblings is either a supersession (the newest under that slug is the live one) or a naming mistake; say which in the report.
 
-Read all of them **in full** before looking at any code. They are not redundant: the spec carries intent, the PRD carries the numbered requirements you will trace, and the PRP carries the plan you will check line by line. A requirement that only exists in the spec still counts.
+Read all of them **in full** before looking at any code (in a first round; a later round reads less, see *Later Rounds*). They are not redundant: the spec carries intent, the PRD carries the numbered requirements you will trace, and the PRP carries the plan you will check line by line. A requirement that only exists in the spec still counts.
 
 Then inventory what was actually built with version control (working-tree status and diff). Read the complete diff of the touched files, and the full contents of every new one. Do not sample.
 
@@ -59,7 +71,7 @@ Reading tells you what the code intends. Only running tells you what it does. Ru
 
 **Check what CI actually runs, too**: a suite excluded from CI has never run there, so a test added to it may never have been executed at all.
 
-**Establish the baseline before attributing anything.** A failure that predates the work is not a finding about the work. If the suite is red, check whether it is red at the merge base too before reporting a single failure against this implementation.
+**Establish the baseline before attributing anything.** A failure that predates the work is not a finding about the work. If the suite is red, check whether it is red at the merge base too before reporting a single failure against this implementation; a failure that is red there too goes under *Outside this case*, unless a PRD requirement depends on it.
 
 **A command that prints no failures has not necessarily passed.** A command can exit 0 having produced no test output at all (wrong environment, wrong working directory, toolchain not found), and piping through `tail` or similar hides it behind a clean exit code. Always confirm you saw a real result line (runs, assertions, failures) before believing a suite passed. If you did not see one, the suite did not run.
 
@@ -91,7 +103,7 @@ Two categories produce nearly every real finding. Search both deliberately.
 
 **Gaps the PRP itself flagged.** The PRP's constraints and open questions routinely contain items worded as ⚠️ *verify this during implementation* or *confirm before shipping*. These are the highest-yield findings in the audit, because the implementer was told about them and the code shows whether they were closed. Check every one against the code, and never accept the PRP's own framing as fact: it may have understated the problem.
 
-**Gaps the PRP never anticipated.** The plan reasons about the paths it introduces; defects live in the paths it never considered. For any new state, field, or guarantee, search for what *else* in the codebase writes it, and check each hit: callbacks and hooks, bulk updates that filter on some states but not the new one, endpoints that set the state directly, background work, a retried job replaying a transition a second time, soft-delete and restore paths, display maps, labels, and helpers that count by state. A new terminal status is only terminal if no other write path can lift it.
+**Gaps the PRP never anticipated.** The plan reasons about the paths it introduces; defects live in the paths it never considered. For any state, field, or guarantee **the change introduces or changes**, search for what *else* in the codebase writes it, and check each hit: callbacks and hooks, bulk updates that filter on some states but not the new one, endpoints that set the state directly, background work, a retried job replaying a transition a second time, soft-delete and restore paths, display maps, labels, and helpers that count by state. A new terminal status is only terminal if no other write path can lift it.
 
 Run the mechanical sweeps the repository's guidance lists for every audit; their failures are usually silent.
 
@@ -108,8 +120,9 @@ Group findings so the reader knows what needs their attention versus what is mer
 1. **Verification runs**: the commands and their result lines, up front.
 2. **Planned and implemented**: the matrices from §2.
 3. **Gaps**, ordered by consequence (scale below). For each: what breaks, the evidence (probe output, `file:line`), and whether the plan had flagged it.
-4. **Open decisions**: deviations the PRP announced and left to the requester. Not defects; unanswered questions that stay open until the requester answers. Say what the fallback costs.
+4. **Open decisions**: questions the approved plan did not settle: deviations from the approved PRP found in the implementation, or decisions the plan left open. Deviations the operator already answered in the plan approval are cited with that request, never raised again. Not defects; unanswered questions that stay open until the requester answers. Say what the fallback costs.
 5. **Minor deviations**: naming, wording, uneven coverage between parallel files. Note them; don't inflate them.
+6. **Outside this case**: one line each, no severity, no investigation (see *Stay Inside the Case*).
 
 Order the gaps by consequence:
 
@@ -129,7 +142,7 @@ Close by proposing the fixes for the gaps, with a one-line sketch of each.
 An audit that lives only in a conversation is gone when it ends, and the next person to touch this code cannot tell a deliberate deviation from an unnoticed one. So every audit is also written as a document:
 
 - Its name is **the case ID** shared by the spec, PRD, and PRP it audits, copied verbatim. Where the source documents disagree on the prefix (one was re-minted to supersede an earlier one), take the prefix of the newest document you audited against, and name all source documents in the header so the mismatch is on the record.
-- If an audit with that name already exists, you are re-auditing: mint a fresh UTC timestamp so both sort oldest to newest under the same slug.
+- If the case's audit already exists, you are auditing a later round: add a `Round N` section to it (see *Later Rounds*), never a second audit.
 - Save it where your task input says (by default, the case's `artifacts/` folder).
 - Open it with a short header naming the source documents, so the audit says what it was measured against.
 
@@ -138,6 +151,18 @@ An audit that lives only in a conversation is gone when it ends, and the next pe
 **It records the implementation as found.** If fixes are later applied, don't rewrite it: append a dated section recording which findings were closed and how, and strike the resolved entries in place rather than deleting them. An audit whose gaps quietly vanish is worth nothing to the person reading it in six months.
 
 Probe files are still deleted (§4); their **output** belongs in the audit, quoted as evidence.
+
+**Keep the record proportionate.** Evidence is a result line, a `file:line`, a short probe output; not whole logs or pasted files. Aim for a first-round audit under about 30 KB, and a later round under about 10 KB.
+
+## Later Rounds
+
+A later round verifies the fixes, not the whole change again. Its input names the earlier findings, the fix outputs, and the commit the last round audited.
+
+- Read the earlier audit's findings and the revision sections of any revised document, not the documents again in full.
+- Inventory the diff **since the last audited commit**, and audit that: each finding it claims to close (re-run its probe; the regression test fails without the fix), and anything new the fix touches.
+- Re-run the full suite, the system suite when the fix touched the interface, and the linters and scanner: a fix can break what the earlier round verified.
+- Requirements the diff does not touch keep their earlier rows: write "unchanged since round N-1 (commit ...)" instead of tracing them again. A requirement the diff touches, or a new one, gets its row re-traced.
+- Append the round as a `Round N` section; strike closed findings in place, keep IDs of findings still open.
 
 ## Notes
 

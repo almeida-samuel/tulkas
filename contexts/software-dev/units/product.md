@@ -13,7 +13,7 @@ Entry unit for every case. It turns the operator's request into product document
 
 ## Records Owned
 
-Only this unit's orchestrator changes these. The context keeps no shared records under `data/software-dev/records/`: everything a case produces lives in its case folder and its branch.
+Only this unit's orchestrator changes these. The context keeps no shared records under `docs/tulkas/records/`: everything a case produces lives in its case folder and its branch.
 
 - The case's work item (`state/product.json`): task type, document statuses, operator answers.
-- Accepted product documents (spec, experience design, PRD) in the case's `artifacts/`, until Engineering publishes them to `docs/tulkas/`.
+- Accepted product documents (spec, experience design, PRD) in the case's `artifacts/`, committed with the case.

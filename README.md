@@ -40,7 +40,7 @@ Requires [Claude Code](https://code.claude.com) 2.1 or later.
 
 The main conversation becomes the dispatcher. It reports which tasks are running and shows you the case response. Answer as the operator, e.g. "Continue, the customer paid", to take the sale through payment, delivery, and recording.
 
-Every run creates a case folder under `data/firearm-store/cases/<case-id>/` with the request, the task list, the event log, and each task's input and output.
+Every run creates a case folder under `docs/tulkas/cases/<case-id>/` with its metadata, the request, the task list, the event log, and one file per task holding its input and response.
 
 More scenarios, with expected results and an audit checklist: [`contexts/firearm-store/test-scenarios.md`](contexts/firearm-store/test-scenarios.md).
 
@@ -61,11 +61,10 @@ contexts/
     human-roles/              # roles only a person can fill
     mock-data.md              # what is mocked, who owns it, test identities
     test-scenarios.md         # runs to try, with expected results
-data/
-  firearm-store/
-    records/                  # shared mock records (catalog, inventory, ledger...)
-    external/                 # data behind external parties (fictional criminal records)
-    cases/                    # one folder per simulated case
+docs/tulkas/
+  records/                    # shared mock records (catalog, inventory, ledger...)
+  external/                   # data behind external parties (fictional criminal records)
+  cases/                      # one folder per simulated case (its metadata.json names the context)
 runtimes/
   claude-code/README.md       # how the framework maps onto Claude Code
 ```

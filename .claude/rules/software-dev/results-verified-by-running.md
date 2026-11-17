@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Results Are Verified by Running
@@ -20,6 +20,8 @@ An output (implementation, audit, security review, or fix) claims that a suite, 
 ## Consequence
 
 The claim counts only with its **quoted result line** (e.g., runs, assertions, failures). A claim without one is treated as not run, and the output is **rejected**.
+
+Checking this rule means reading the output's result lines; it never requires running the suites again.
 
 ## Check
 

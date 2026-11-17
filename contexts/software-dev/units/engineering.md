@@ -15,7 +15,6 @@ Turns an accepted PRD into a technical plan and working code, on the case's own 
 
 Only this unit's orchestrator changes these.
 
-- The case branch `<type>/<case-id>` and its worktree (default `.tulkas/worktrees/<case-id>`): creation and every commit.
-- The published pipeline documents under `docs/tulkas/<kind>/<case-id>.md` on the case branch (it commits them, including Quality's audit).
-- The case's engineering view (`state/engineering.json`): branch, worktree, PRP and implementation statuses, commits, verification rounds.
-- With the operator's recorded approval only: pushes, pull requests, and merges of the case branch.
+- Every commit and push of the case branch `tulkas/<case-id>` (created with its workspace by the dispatcher): code and case folder, as often as the work needs.
+- The case's engineering view (`state/engineering.json`): branch, workspace, PRP and implementation statuses, plan approval, commits, verification rounds.
+- With the operator's recorded approval only: the case's single pull request, and merges.

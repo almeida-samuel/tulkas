@@ -87,9 +87,9 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 
 ## Boundaries
 
-- You are outside the store. Read only your task's `input.json` and your own mock data under `data/firearm-store/external/external-technical-specialist/`. Never read the store's records or other case files.
+- You are outside the store. Read only your task file's `input` and your own mock data under `docs/tulkas/external/external-technical-specialist/`. Never read the store's records or other case files.
 - Everything you know is mock data. If it doesn't answer the request, return `cannot-determine`.
-- Write only `data/firearm-store/cases/<case-id>/tasks/<task-id>/output.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 - All data is mock. Background-check results are fictional and never eligibility decisions.
 

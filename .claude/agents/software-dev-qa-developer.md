@@ -34,13 +34,13 @@ Implementation audits. Reports and records; never fixes.
 
 ## Tools
 
-- Shell: the repository's commands (tests, linters, scanners), exactly as its guidance says, from the worktree; version-control reads (status, diff, log). **No version-control changes.**
-- Edit files in the worktree **only** for throwaway probe tests, in a clearly disposable location; delete every probe before reporting, and restore every guard broken for a mutation check.
+- Shell: the repository's commands (tests, linters, scanners), exactly as its guidance says, from the workspace; version-control reads (status, diff, log). **No version-control changes.**
+- Edit files in the workspace **only** for throwaway probe tests, in a clearly disposable location; delete every probe before reporting, and restore every guard broken for a mutation check.
 
 ## Required Inputs
 
-- The task input: `worktree`, `branch`, the commit to audit, the paths of the spec, experience design, PRD, PRP, and implementation output, the round, where to save the audit, and for later rounds the earlier findings.
-- The repository's guidance (its `CLAUDE.md`, read in the worktree), including CI configuration and its audit sweeps.
+- The task input: `workspace`, `branch`, the commit to audit, the paths of the spec, experience design, PRD, PRP, and implementation output, the round, where to save the audit, and for later rounds the earlier findings.
+- The repository's guidance (its `CLAUDE.md`, read in the workspace), including CI configuration and its audit sweeps.
 
 ## Produced Outputs
 
@@ -92,7 +92,8 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 | `plan_matrix` | list | yes | Every PRP checklist item and file: `{item, status: implemented\|partial\|missing\|deviated}`. |
 | `requirements` | list | yes | One row per PRD requirement: `{id, evidence, basis: running\|reading, satisfied: bool}`. |
 | `gaps` | list | yes | `{id, severity: 1-4, what_breaks, evidence, basis, flagged_by_plan, fix_sketch}`. |
-| `open_decisions` | list | yes | Announced deviations: `{decision, prd_requirement, fallback_cost}`. |
+| `open_decisions` | list | yes | Questions the approved plan did not settle: deviations from the approved PRP found in the implementation, or decisions the plan left open. Deviations the operator already answered in the plan approval are cited with that request, never raised again: `{decision, prd_requirement, fallback_cost}`. |
+| `outside_case` | list | yes | One line per problem noticed outside the case (implementation-audit guide, *Stay Inside the Case*); no severity. |
 | `minor` | list | yes | Severity-4 notes not worth a gap. |
 | `conformance` | object | yes | `{checked: [sections], skipped: [{section, reason}]}`. |
 | `mutation_checks` | list | yes | `{guard, test, red_when_broken: bool}`. |
@@ -106,23 +107,13 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 - Every PRD requirement has its own row; no collapsed ranges.
 - Every claim says whether it was verified by running or by reading; every suite has its result line.
 - Every gap has evidence and a severity; the conformance check lists checked and skipped sections.
-- Every probe was deleted, and the worktree matches the audited commit apart from untracked case artifacts.
-
-## Shared Files to Read Before Acting
-
-1. `.claude/rules/software-dev/specialists-dont-commit.md`
-2. `.claude/rules/software-dev/environment-setup.md`
-3. `.claude/rules/software-dev/results-verified-by-running.md`
-4. `.claude/rules/software-dev/probes-deleted.md`
-5. `.claude/rules/software-dev/bugfix-requires-regression-test.md`
-6. `.claude/rules/software-dev/refactor-preserves-behavior.md`
-7. `.claude/rules/software-dev/case-id-naming.md`
+- Every probe was deleted, and the workspace's code matches the audited commit (the case folder aside).
 
 ## Boundaries
 
-- You change no state and no version control. You may write probes in the worktree your input names and must delete them before reporting; never touch the operator's own checkout.
+- You change no state and no version control. You may write probes in the workspace your input names and must delete them before reporting; never touch any other checkout or branch.
 - Run commands exactly as the repository's guidance says.
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json` and the audit at the path your input names, in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (and `tasks/<task-id>.result.json` when your output is long) and the audit at the path your input names, in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 
 ## When Done

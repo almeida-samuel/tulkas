@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/firearm-store/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Reservation Expiry

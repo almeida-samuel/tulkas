@@ -35,7 +35,7 @@ The guidance must not contradict Tulkas. `tulkas-init` flags, and proposes rewri
 - **A competing development pipeline**: skills or workflow sections that make documents Tulkas now produces (specs, PRDs, PRPs, audits) in other locations or under other rules. Tulkas runs the pipeline; the guidance keeps the house rules the pipeline works within.
 - **Document locations**: references to pipeline documents outside `docs/tulkas/`. Earlier documents stay where they are as an archive; new ones go under `docs/tulkas/`.
 - **Rules that cite pipeline documents** (e.g., "comments must not cite `docs/prps/`") must name `docs/tulkas/` too.
-- **Instructions that break the Tulkas branch rules**: committing to the base branch, pushing or deploying without the operator.
+- **Instructions that break the Tulkas branch rules**: committing to the base branch, opening pull requests, merging, or deploying without the operator.
 - **Duplicated knowledge**: restatements of what the Tulkas guides already hold (the zero-technical-content rule and its litmus tests, the PRP contents, the audit method). The guidance keeps only what is specific to this repository.
 
 ## Tulkas Section
@@ -47,9 +47,8 @@ The section `tulkas-init` adds to the guidance, filled in for the repository (pl
 
 This repository is run with the **Tulkas** framework, context `software-dev` (set in `.claude/tulkas.json`). Work arrives as cases, opened with `/run-case <request>`: Product turns the request into a spec and a PRD, Engineering writes the PRP and implements it, and Quality audits the result. The operator approves anything beyond the agents' authority.
 
-- **Documents**: every case's spec, experience design, PRD, PRP, and audit are committed under `docs/tulkas/<kind>/<case-id>.md` (`features`, `bugfixes`, `refactors`, `experience`, `prds`, `prps`, `audits`). They are the record of why each change was made. Code comments never cite them.
-- **Case data**: `data/software-dev/cases/` (<committed | git-ignored>).
-- **Branches**: each case works on `<type>/<case-id>` (`feature/`, `bugfix/`, `refactor/`), branched from `<base branch>`, in its own worktree under `.tulkas/worktrees/` (git-ignored). Agents never commit to <protected branches>, and never push, open pull requests, or merge without the operator's approval.
+- **Cases**: each case lives in `docs/tulkas/cases/<case-id>/` (its `metadata.json` names the context and workspace) and is committed with the change: the spec, experience design, PRD, PRP, and audit under its `artifacts/`, plus the case's task log. They are the record of why each change was made. Code comments never cite them.
+- **Branches**: each case works on `tulkas/<case-id>`, branched from `<base branch>`, in its own worktree under `.tulkas/worktrees/` (git-ignored; or in this checkout with `/run-case --branch`), and reaches the base branch through **one pull request**. The operator approves the plan before anything is implemented. Agents commit and push only the case branch, never commit to <protected branches>, and never open a pull request or merge without the operator's approval.
 
 ### Repository Profile
 

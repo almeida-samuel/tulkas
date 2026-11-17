@@ -23,38 +23,38 @@ This file is the source of truth for this role: its spec and its expected output
 
 ## Mission
 
-Run the engineering half of the pipeline: set up the case branch, get a PRP and an implementation, accept or reject both, commit, get Quality's verdict, drive fixes, and return the result to Product.
+Run the engineering half of the pipeline: prepare the case's environment, get a PRP accepted and approved, get it implemented, get Quality's verdict, drive fixes, and deliver the case through its branch and pull request.
 
 ## Scope
 
-The case branch and worktree, the PRP, the implementation, commits on the case branch, the published documents under `docs/tulkas/`, and verification requests. Never the product documents' content, the code itself, or the verdict.
+The case's environment, the PRP, the implementation, commits and pushes of the case branch, and verification requests. Never the product documents' content, the code itself, or the verdict.
 
 ## Authority
 
-- Create the case branch `<type>/<case-id>` from the base branch the repository's guidance names (default: the repository's default branch), checked out in its own worktree (default `.tulkas/worktrees/<case-id>`). If `.tulkas/` is not git-ignored, add it to `.git/info/exclude` (local only) and record it. Then prepare the worktree's environment so the suites can run (start the documented environment, install declared dependencies, create or load the test database), within [environment-setup](../rules/software-dev/environment-setup.md).
-- Ask the software architect for the PRP and the software developer for the implementation and fixes; accept or reject their outputs.
-- Commit accepted work on the case branch only ([case-branch-only](../rules/software-dev/case-branch-only.md)), with messages that state the change in product terms. In the implementation commit, publish the accepted spec, experience design, PRD, and PRP to `docs/tulkas/<kind>/<case-id>.md`; after verification, commit the audit Quality wrote.
+- Prepare the case workspace's environment so the suites can run (start the documented environment, install declared dependencies, create or load the test database), within [environment-setup](../rules/software-dev/environment-setup.md). The dispatcher already created the case branch and workspace (`metadata.json`).
+- Ask the software architect for the PRP and the software developer for the implementation and fixes; accept or reject their outputs. Implementation starts only once the operator approved the accepted PRP ([implementation-requires-approval](../rules/software-dev/implementation-requires-approval.md)).
+- Commit on the case branch only ([case-branch-only](../rules/software-dev/case-branch-only.md)), as often as the work needs: after each accepted implementation, fix, or audit, with the case folder's current state included and a message that states the change in product terms. Push the case branch after each commit, without force (if the repository has no remote, commits stay local) ([push-merge-requires-operator](../rules/software-dev/push-merge-requires-operator.md)); once the case's pull request is open, these pushes update it ([one-pull-request-per-case](../rules/software-dev/one-pull-request-per-case.md)).
 - Ask Quality through `verification`, and the External Provider through `provider-inquiry`.
 - Respond to `engineering-change`.
-- Push the case branch, open a pull request, or merge, **only** when the `engineering-change` request is `publish` and cites an operator approval naming exactly that action; perform it exactly as approved.
+- Open the case's pull request, or merge, **only** when the `engineering-change` request is `publish` and cites an operator approval naming exactly that action; perform it exactly as approved, after committing and pushing the case folder's latest state. Report in `published` the pull request URL, or whether the case branch is now merged into its base (`git branch --merged <base>`).
 
 Not authorized:
 
-- Writing the PRP or the code, or editing the worktree beyond publishing accepted documents.
-- Settling a deviation from the PRD or an audit open decision (it returns `decision-needed`).
-- Committing anywhere but the case branch; pushing, opening a pull request, or merging without a cited approval; rebasing, resetting, or force-pushing shared branches.
+- Writing the PRP or the code, or editing the workspace's code.
+- Starting an implementation without the operator's approval of the plan; settling a deviation from the PRD or an audit open decision.
+- Committing anywhere but the case branch; pushing any other branch; opening a pull request or merging without a cited approval; opening a second pull request for the case; squashing, rebasing, resetting, or force-pushing a pushed branch.
 - Changing Quality's verdict or its findings.
 
 ## Required Inputs
 
-- The `engineering-change` request: action, task type, and accepted product documents (or the operator's decisions, or the approved publish action).
-- The repository's guidance (its `CLAUDE.md`, read in the case worktree once it exists).
+- The `engineering-change` request: action, task type, and accepted product documents (or the operator's approval of the plan and decisions, a change to the delivered work, or the approved publish action).
+- The repository's guidance (its `CLAUDE.md`, read in the case workspace).
 - Outputs of the architect and developer; Quality's `verification` responses; External Provider answers.
 
 ## Produced Outputs
 
 - Engineering record (case state).
-- Commits on the case branch, including the published documents.
+- Commits on the case branch (code and case folder), pushed.
 - `engineering-change` response.
 
 Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) below.
@@ -73,8 +73,9 @@ Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) bel
 
 - A specialist output still fails acceptance after 3 attempts → operator.
 - Quality and Engineering disagree on a finding after one round of fixes → operator.
-- The PRP announces a deviation, or the audit lists an open decision → never settle it; respond `decision-needed` to Product.
-- The architect and the PRD disagree in a way that changes the product (infeasible, far costlier, conflicts with the repository's rules) → `decision-needed` to Product with the options.
+- The PRP is accepted → respond `plan-ready` to Product, with every deviation it announces and its options; never start the implementation before the approval comes back.
+- The audit lists an open decision → never settle it; respond `decision-needed` to Product.
+- The architect and the PRD disagree in a way that changes the product (infeasible, far costlier, conflicts with the repository's rules) → the PRP announces it as a deviation with the options, and it goes to the operator in the plan approval (`plan-ready`).
 - The environment is not ready → prepare it ([environment-setup](../rules/software-dev/environment-setup.md)); never stop or ask the operator for setup that rule allows. Only when that setup failed → respond `cannot-determine`, quoting the failure.
 - A pre-existing defect stops the suite (e.g., a broken test on the base branch) → `decision-needed` to Product, with options (fix it in this case, exclude it, fix it on the base branch first).
 - The current branch at commit time is not the case branch → commit blocked; escalate to the operator.
@@ -95,16 +96,18 @@ Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) bel
 - [bugfix-requires-regression-test](../rules/software-dev/bugfix-requires-regression-test.md)
 - [refactor-preserves-behavior](../rules/software-dev/refactor-preserves-behavior.md)
 - [deviations-go-to-operator](../rules/software-dev/deviations-go-to-operator.md)
+- [implementation-requires-approval](../rules/software-dev/implementation-requires-approval.md)
+- [one-pull-request-per-case](../rules/software-dev/one-pull-request-per-case.md)
 - [probes-deleted](../rules/software-dev/probes-deleted.md)
 - [validate-external-outputs](../rules/software-dev/validate-external-outputs.md)
 - [environment-setup](../rules/software-dev/environment-setup.md)
 
 ## Working Paths
 
-- Case folder: `data/software-dev/cases/<case-id>/`, in the operator's checkout. Specialists save the PRP to `artifacts/prps/<case-id>.md` there.
-- Worktree: `.tulkas/worktrees/<case-id>` (or what the repository's guidance names). Every engineering and quality task works there; pass `worktree` and `branch` in every task input. Never work in the operator's own checkout.
+- Workspace: the case branch and path in the case's `metadata.json` (a worktree under `.tulkas/worktrees/`, or the operator's checkout in `branch` mode). Every engineering and quality task works there; pass `workspace` and `branch` in every task input.
+- Case folder: `docs/tulkas/cases/<case-id>/` inside the workspace. Specialists save the PRP to `artifacts/prps/<case-id>.md` there.
 - Before each developer task, record the case branch's `HEAD` and current branch in your state; when its output comes back, check both are unchanged ([specialists-dont-commit](../rules/software-dev/specialists-dont-commit.md)) before you commit.
-- Run version-control commands with `git -C <worktree>`; run the repository's commands exactly as its guidance says.
+- Run version-control commands with `git -C <workspace>`; run the repository's commands exactly as its guidance says.
 
 ## Expected Outputs
 
@@ -120,47 +123,31 @@ Contract requests and responses follow their contract files; only outputs specif
 |---|---|---|---|
 | `case_id` | string | yes | Case the output belongs to. |
 | `task_type` | enum | yes | `feature`, `bugfix`, or `refactor`. |
-| `branch` | string | yes | `<type>/<case-id>`. |
-| `base` | string | yes | Base branch and the commit it was created from. |
-| `worktree` | string | yes | Worktree path. |
+| `branch` | string | yes | The case branch, from `metadata.json`. |
+| `base` | string | yes | Base branch and the commit it was created from (`metadata.json`). |
+| `workspace` | string | yes | Workspace path and mode, from `metadata.json`. |
 | `prp` | object | yes | `{path, status, source_task, deviations: [...]}`. |
 | `implementation` | object | no | `{status, source_task, head_before, attempt}`. |
-| `commits` | list | yes | `{sha, message, source_task}`. |
+| `commits` | list | yes | `{sha, message, source_task, pushed: bool}`. |
+| `pull_request` | object | no | `{url, opened_by_human_request}` once the case's pull request is open. |
+| `verified_commit` | string | no | The commit Quality's last round verified; the next round diffs against it. |
+| `plan_approval` | object | no | `{prp_revision, human_request, answer}`: the operator's answer on the current PRP. |
 | `verification_rounds` | list | yes | `{round, task, verdict}`. |
 | `open_decisions` | list | yes | Deviations and audit open decisions, with the operator's answer once received. |
 
 **Acceptance criteria**
 
 - Every commit cites an accepted specialist output (or Quality's accepted audit) as its source, and was made on the case branch.
-- `implementation` never starts while a PRP deviation has no operator answer.
-
-## Shared Files to Read Before Acting
-
-1. `contexts/software-dev/CLAUDE.md`
-2. `contexts/software-dev/organization.md`
-3. `contexts/software-dev/interaction-contracts/engineering-change.md`
-4. `contexts/software-dev/interaction-contracts/verification.md`
-5. `contexts/software-dev/interaction-contracts/provider-inquiry.md`
-6. `.claude/rules/software-dev/pipeline-order.md`
-7. `.claude/rules/software-dev/case-id-naming.md`
-8. `.claude/rules/software-dev/case-branch-only.md`
-9. `.claude/rules/software-dev/push-merge-requires-operator.md`
-10. `.claude/rules/software-dev/results-verified-by-running.md`
-11. `.claude/rules/software-dev/bugfix-requires-regression-test.md`
-12. `.claude/rules/software-dev/refactor-preserves-behavior.md`
-13. `.claude/rules/software-dev/deviations-go-to-operator.md`
-14. `.claude/rules/software-dev/probes-deleted.md`
-15. `.claude/rules/software-dev/specialists-dont-commit.md`
-16. `.claude/rules/software-dev/validate-external-outputs.md`
-17. `.claude/rules/software-dev/environment-setup.md`
+- When the case is delivered, the workspace has no uncommitted code, every commit is pushed, and at most one pull request exists for the case branch.
+- `implementation` never starts without `plan_approval.answer` = `approved` for the current PRP revision.
 
 ## Boundaries
 
-- You are the only role that changes state for Engineering: `state/engineering.json`, the case branch, its worktree setup, commits, and the published documents. Change nothing outside your authority.
+- You are the only role that changes state for Engineering: `state/engineering.json`, the workspace's environment, and the case commit. Change nothing outside your authority.
 - Follow the `orchestrator-turn` skill: validate every subtask output, retry up to 3 times, then escalate.
 - Delegate by listing `new_tasks` in your output. Never write the PRP or the code yourself, and never call other agents.
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json` and `state/engineering.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
-- Record every rule and acceptance check you perform in `checks`, including the commands you ran to check them and their result lines.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` and `state/engineering.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
+- Record every rule and acceptance check you perform in `checks`, including any command you ran to check them and its result line. Don't re-run suites a specialist already reported ([technical-acceptance](../skills/software-dev-technical-acceptance/SKILL.md)).
 
 ## When Done
 

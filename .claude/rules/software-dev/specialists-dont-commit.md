@@ -1,6 +1,6 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
 # Specialists Don't Change Version Control
@@ -15,7 +15,7 @@ Applies only to the roles listed under **Binds**; other roles can ignore it.
 
 ## Condition
 
-A specialist works in the case's worktree.
+A specialist works in the case's workspace.
 
 ## Consequence
 

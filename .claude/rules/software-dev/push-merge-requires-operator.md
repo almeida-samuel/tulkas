@@ -1,9 +1,9 @@
 ---
 paths:
-  - "data/software-dev/**"
+  - "**/docs/tulkas/**"
 ---
 
-# Push and Merge Require the Operator
+# Pull Requests and Merges Require the Operator
 
 | | |
 |---|---|
@@ -15,12 +15,17 @@ Applies only to the roles listed under **Binds**; other roles can ignore it.
 
 ## Condition
 
-Work would leave the local repository or reach a shared branch: push, open or update a pull request, merge, rebase or reset a shared branch, delete a branch, or force-push.
+Work would leave the local repository or reach a shared branch.
 
 ## Consequence
 
-**Never** done on a role's own authority. The Product Owner asks the operator (approval request) with what would be pushed or merged and where. Only an approved action is performed, exactly as approved.
+- **Allowed without asking:** pushing the case branch (`tulkas/<case-id>`) to the remote, as often as the work needs, without force. Once the case's pull request is open, these pushes update it.
+- **One approval per case:** opening the case's pull request. The Product Owner asks the operator (approval request) with the branch, the target branch, and the title.
+- **Always an approval naming the action:** merging; deleting a branch; pushing any branch other than the case branch.
+- **Never:** force-pushing, rebasing, or resetting any branch that was pushed.
+
+Only an approved action is performed, exactly as approved.
 
 ## Check
 
-Every push, pull request, or merge event is preceded by a human request (kind `approval`) naming that action, with an `approved` response.
+Every push targets the case branch without force. Every pull-request opening and every merge is preceded by a human request (kind `approval`) naming that action, with an `approved` response.

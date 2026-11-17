@@ -16,5 +16,5 @@ Verifies Engineering's work independently and gives the verdict Product relies o
 Only this unit's orchestrator changes these.
 
 - The verification verdict of each round.
-- The accepted audit, written to `docs/tulkas/audits/<case-id>.md` in the case worktree (Engineering commits it).
+- The accepted audit (`artifacts/audits/<case-id>.md` in the case folder, committed with the case).
 - The case's quality view (`state/quality.json`).

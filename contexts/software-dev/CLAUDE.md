@@ -11,7 +11,7 @@ Guidance for the **software-dev** context: a software development team running o
 
 ## Current State
 
-Design phase. The role lineup, guides, rules, and the organizational map (organization, units, contracts, agents) are drafted for review. No case has run yet.
+Design phase. The role lineup, guides, rules, and the organizational map (organization, units, contracts, agents) are drafted for review. A first case (a multi-screen refactor in a Rails repository) ran 84 tasks over about 11 hours; the cost-control guidance (small revision sections, later audit rounds scoped to the fix diff, no acceptance re-runs, one revision pass per operator answer, a new case for work after merge, size targets for PRD, PRP, and audit) came from it. A review of that run then added: case data in `docs/tulkas/cases/<case-id>/` committed with the case, `worktree` or `branch` workspace mode, the operator's approval of the plan before implementation, audits kept inside the case, changes on the same case until merge, and one branch and one pull request per case.
 
 ## Overview
 
@@ -60,16 +60,17 @@ The **repository** a case runs in is the one the operator works from; its own gu
 
 | Action | Treated as | Who |
 |---|---|---|
-| Create the case branch `<type>/<case-id>` and its worktree (default `.tulkas/worktrees/<case-id>`, git-ignored) | State change | Tech Lead |
+| Create the case branch `tulkas/<case-id>` and its workspace: a worktree under `.tulkas/worktrees/` (default) or the operator's clean checkout (`branch` mode, from `/run-case --branch` or `.claude/tulkas.json`) | Mechanical, at case opening | Dispatcher |
 | Prepare the environment: start it, install declared dependencies, create or load the test database ([environment-setup](../../.claude/rules/software-dev/environment-setup.md)) | Work, no approval needed | Any role with the shell, inside the environment the guidance requires |
-| Edit files in the case worktree | Work product (like `artifacts/`) | Software Developer; QA Developer and Security Reviewer only for throwaway probes, deleted before reporting |
-| Commit on the case branch | State change, within authority | Tech Lead, after accepting the implementation ([case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)) |
-| Publish accepted documents to `docs/tulkas/<kind>/<case-id>.md` | State change, part of a commit | Tech Lead (spec, experience design, PRD, PRP); Quality Lead writes the audit, Tech Lead commits it |
-| Push, pull request, merge, or anything touching a shared branch | Outward-facing, hard to reverse | Only with the operator's approval ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md)) |
+| Edit files in the case workspace | Work product (like `artifacts/`) | Software Developer; QA Developer and Security Reviewer only for throwaway probes, deleted before reporting |
+| Start the implementation | Needs the operator's approval of the plan | Tech Lead, after the Product Owner's approval request ([implementation-requires-approval](../../.claude/rules/software-dev/implementation-requires-approval.md)) |
+| Commit on the case branch | State change, within authority | Tech Lead: as often as the work needs, code and case folder, only on the case branch ([case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)) |
+| Push the case branch | Allowed, never forced | Tech Lead, after each commit ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md)) |
+| Open the case's pull request (**one per case**), merge, or anything touching another branch | Outward-facing, hard to reverse | Only with the operator's approval ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md), [one-pull-request-per-case](../../.claude/rules/software-dev/one-pull-request-per-case.md)) |
 
-Specialists never change version control ([specialists-dont-commit](../../.claude/rules/software-dev/specialists-dont-commit.md)). One branch and worktree per case keeps parallel cases from writing the same files and leaves the operator's own checkout untouched.
+Specialists never change version control ([specialists-dont-commit](../../.claude/rules/software-dev/specialists-dont-commit.md)). In `worktree` mode, one worktree per case keeps parallel cases from writing the same files and leaves the operator's own checkout untouched; `branch` mode runs one case at a time in the operator's checkout. **A case closes when its branch is merged** (an approved `publish` merge, or the operator saying it merged it) **or when it is abandoned**, not when a deliverable is accepted: until then, the operator can add fixes and changes to it. After the merge, further work is a new case.
 
-Document kinds under `docs/tulkas/`: `features`, `bugfixes`, `refactors`, `experience`, `prds`, `prps`, `audits`. Every document of a case is named after the case ID.
+Each case lives in `docs/tulkas/cases/<case-id>/` inside its workspace and is committed whole with the case. Its documents are under `artifacts/<kind>/`, with kinds `features`, `bugfixes`, `refactors`, `experience`, `prds`, `prps`, `audits`; every document is named after the case ID.
 
 A repository is prepared with `/tulkas-init software-dev`, which checks its `CLAUDE.md` against [repository-requirements.md](repository-requirements.md) (what the roles need from it, the conflicts to resolve, and the Tulkas section to add).
 
@@ -88,7 +89,7 @@ A repository is prepared with `/tulkas-init software-dev`, which checks its `CLA
 | Security Reviewer | [security-review](../../.claude/skills/software-dev-security-review/SKILL.md) |
 | External Provider | [provider-inquiry](../../.claude/skills/software-dev-provider-inquiry/SKILL.md) |
 
-Rules live in `.claude/rules/software-dev/` (each lists the roles it binds): `product-docs-no-technical-content`, `pipeline-order`, `case-id-naming`, `results-verified-by-running`, `bugfix-requires-regression-test`, `refactor-preserves-behavior`, `delivery-requires-verification-pass`, `deviations-go-to-operator`, `validate-external-outputs`, `probes-deleted`, `case-branch-only`, `push-merge-requires-operator`, `specialists-dont-commit`, `environment-setup`.
+Rules live in `.claude/rules/software-dev/` (each lists the roles it binds): `product-docs-no-technical-content`, `pipeline-order`, `case-id-naming`, `results-verified-by-running`, `bugfix-requires-regression-test`, `refactor-preserves-behavior`, `delivery-requires-verification-pass`, `deviations-go-to-operator`, `implementation-requires-approval`, `one-pull-request-per-case`, `validate-external-outputs`, `probes-deleted`, `case-branch-only`, `push-merge-requires-operator`, `specialists-dont-commit`, `environment-setup`.
 
 ## Roadmap and Future
 

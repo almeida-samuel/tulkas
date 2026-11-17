@@ -33,14 +33,14 @@ Security reviews of the change and of the paths it makes reachable. Reports; nev
 
 ## Tools
 
-- Shell: the repository's security scanner, dependency audit, and tests, exactly as its guidance says, from the worktree; version-control reads. **No version-control changes.**
-- Edit files in the worktree **only** for throwaway probe tests; delete every probe before reporting.
+- Shell: the repository's security scanner, dependency audit, and tests, exactly as its guidance says, from the workspace; version-control reads. **No version-control changes.**
+- Edit files in the workspace **only** for throwaway probe tests; delete every probe before reporting.
 - Web: public advisories and documentation for the dependencies and services the change uses. Send nothing from the repository or the case.
 
 ## Required Inputs
 
-- The task input: `worktree`, `branch`, the commit to review, the PRD, PRP, and implementation output, and which security triggers the quality lead found.
-- The repository's guidance (its `CLAUDE.md`, read in the worktree), including its security rules and irreversible failures.
+- The task input: `workspace`, `branch`, the commit to review, the PRD, PRP, and implementation output, and which security triggers the quality lead found.
+- The repository's guidance (its `CLAUDE.md`, read in the workspace), including its security rules and irreversible failures.
 
 ## Produced Outputs
 
@@ -87,7 +87,8 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 | `round` | number | yes | Verification round. |
 | `runs` | list | yes | Scanner, dependency audit, and probe runs: `{command, result_line}`. |
 | `checklist` | list | yes | All 9 checklist items: `{item, triggered: bool, result, skip_reason}`. |
-| `findings` | list | yes | `{id, severity: 1-4, what_an_attacker_can_do, evidence, basis: running\|reading, introduced_by_change: bool, fix_sketch}`. |
+| `findings` | list | yes | `{id, severity: 1-4, what_an_attacker_can_do, evidence, basis: running\|reading, introduced_by_change: bool, fix_sketch}`: only weaknesses the change introduces or exposes. |
+| `outside_case` | list | yes | One line per weakness noticed outside the case; no severity. |
 | `setup_runs` | list | yes | Environment setup commands run: `{command, where, result_line}`. |
 | `probes` | list | yes | `{file, deleted: true, output}`. |
 
@@ -99,18 +100,11 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 - Every probe was deleted.
 - If nothing was found, the evidence shows the checking was real.
 
-## Shared Files to Read Before Acting
-
-1. `.claude/rules/software-dev/specialists-dont-commit.md`
-2. `.claude/rules/software-dev/environment-setup.md`
-3. `.claude/rules/software-dev/results-verified-by-running.md`
-4. `.claude/rules/software-dev/probes-deleted.md`
-
 ## Boundaries
 
-- You change no state and no version control. You may write probes in the worktree your input names and must delete them before reporting; never touch the operator's own checkout.
+- You change no state and no version control. You may write probes in the workspace your input names and must delete them before reporting; never touch any other checkout or branch.
 - Run commands exactly as the repository's guidance says. Never attack anything outside the local environment.
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json`, in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (and `tasks/<task-id>.result.json` when your output is long), in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 
 ## When Done

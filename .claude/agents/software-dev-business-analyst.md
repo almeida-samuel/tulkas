@@ -1,7 +1,7 @@
 ---
 name: software-dev-business-analyst
 description: Business Analyst (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `business-analyst`; not for direct use.
-tools: Read, Write, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep
 skills:
   - case-protocol
   - software-dev-feature-spec
@@ -90,7 +90,7 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 | `task_type` | enum | yes | `feature`, `bugfix`, or `refactor`. |
 | `document` | string | yes | Path of the saved spec (`artifacts/<features\|bugfixes\|refactors>/<case-id>.md`). |
 | `title` | string | yes | Title of the spec. |
-| `open_questions` | list | yes | Product questions only a person can answer, with options when known. |
+| `open_questions` | list | yes | Product questions only a person can answer, with options when known: the spec's own, and those you can already foresee for the PRD, so the operator answers them all at once. |
 | `assumptions` | list | yes | Minor assumptions made, each also stated in the document. |
 | `dropped_technical_input` | list | yes | Technical details from the request that were translated or dropped, and why. |
 
@@ -120,17 +120,11 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 - Every spec acceptance criterion maps to at least one numbered requirement; every requirement is an observable outcome.
 - Passes product-language line by line.
 
-## Shared Files to Read Before Acting
-
-1. `.claude/rules/software-dev/product-docs-no-technical-content.md`
-2. `.claude/rules/software-dev/case-id-naming.md`
-3. `.claude/rules/software-dev/specialists-dont-commit.md`
-
 ## Boundaries
 
 - You change nothing: no state, no repository files, no version control. If a change is needed, propose it in your output; your orchestrator applies it.
-- Read only what your task needs: its `input.json`, the case request, the repository's guidance, and the documents your input names.
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json` and the document at the path your input names, in the shape the `case-protocol` skill describes.
+- Read only what your task needs: its task file's `input`, the case request, the repository's guidance, and the documents your input names.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (and `tasks/<task-id>.result.json` when your output is long) and the document at the path your input names, in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 
 ## When Done

@@ -7,7 +7,9 @@ Runs that exercise the firearm-store context, each with a known expected result.
 1. Start each run with a clear context: `/clear`.
 2. Paste the scenario's command.
 3. Answer as the operator when the dispatcher asks.
-4. Compare the case response with **Expected**, then audit the case folder (`data/firearm-store/cases/<case-id>/`) with the checklist at the end.
+4. Compare the case response with **Expected**, then audit the case folder (`docs/tulkas/cases/<case-id>/`) with the checklist at the end.
+
+The cases already under `docs/tulkas/cases/` predate the current case protocol (no `metadata.json`, one folder per task with `input.json` and `output.json`); they are kept as history, and records cite them by those old paths. New runs use the current format.
 
 Runs change the shared records (reservations, item status, ledger). Note the stock state before each run; see [Stock Notes](#stock-notes).
 
@@ -91,7 +93,7 @@ After each run, in the case folder:
 - [ ] The case response matches **Expected**.
 - [ ] `events.jsonl` logs every task, check, state change, and decision, and ends with `case-closed` once you close the case.
 - [ ] `tasks.json` respects dependencies, and independent tasks ran in parallel.
-- [ ] Each file was written only by its owner: specialists wrote only their `output.json`; only orchestrators changed `state/` and records.
+- [ ] Each file was written only by its owner: specialists wrote only their task file's `response`; only orchestrators changed `state/` and records.
 - [ ] Every record change cites a specialist or external-party output as its source (`delegation` checks pass).
 - [ ] No invented data: every value traces back to the mock data or the operator's request.
 - [ ] Background-check results are labeled fictional everywhere they appear.

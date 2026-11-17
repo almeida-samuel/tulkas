@@ -19,7 +19,7 @@ When Engineering asks for verification, get the implementation audited (and secu
 
 ## Plan
 
-- **Implementation audit**: always. QA Developer, with the PRD, the PRP, and the implementation output.
+- **Implementation audit**: always. QA Developer, with the PRD, the PRP, and the implementation output. In a later round, scope it to the round (the implementation audit guide's *Later Rounds*): pass the earlier findings, the fix outputs, and the commit the last round audited. A security review runs again in a later round only when the fixes touch what triggered it.
 - **Security review**: Security Reviewer, in parallel with the audit, when the change touches any of:
   - who can see or do what (authentication, permissions, ownership of records);
   - input from people or other systems (forms, uploads, imports, parameters);
@@ -40,7 +40,11 @@ Accept an audit or a security review only when:
 - the conformance check says which repository sections were checked and which were skipped, with reasons;
 - probes were deleted.
 
-Otherwise reject with what is missing. Publish each accepted audit to `docs/tulkas/audits/<case-id>.md` on the case branch; Engineering commits it.
+- every finding is inside the case (about the change, a PRD requirement, or a regression it caused); anything else is only listed under *Outside this case*, without a severity.
+
+Otherwise reject with what is missing. The accepted audit stays in the case folder (`artifacts/audits/<case-id>.md`) and is committed with the case.
+
+Findings listed under *Outside this case* never affect the verdict and are not sent back to Engineering for fixing; the response passes them on as `outside_case`, for the operator to open as new cases if wanted.
 
 ## Verdict
 
@@ -50,7 +54,7 @@ Otherwise reject with what is missing. Publish each accepted audit to `docs/tulk
 | **pass with notes** | Only severity 3 or 4 findings. List them; Engineering decides whether to fix them now. |
 | **pass** | No findings, with the evidence that the checking was real. |
 
-Separately from the verdict, list the **open decisions**: deviations the PRP announced and left to the requester. They are not defects, but nobody below the operator may settle them; they go to the operator through Product.
+Separately from the verdict, list the **open decisions**: questions the approved plan did not settle: deviations from the approved PRP found in the implementation, or decisions the plan left open. Deviations the operator already answered in the plan approval are cited with that request, never raised again. They are not defects, but nobody below the operator may settle them; they go to the operator through Product.
 
 A **fail** goes back to Engineering with the blocking findings and the fix sketches. After 3 rounds of fail on the same findings, escalate.
 

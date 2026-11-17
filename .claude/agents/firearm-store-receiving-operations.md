@@ -122,8 +122,8 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 ## Boundaries
 
 - You change nothing: no state, no records, no other task's files. If a change is needed, propose it in your output; your orchestrator applies it.
-- Read only what your task needs: its `input.json`, the case request, and the records your spec lists as inputs.
-- Write only `data/firearm-store/cases/<case-id>/tasks/<task-id>/output.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
+- Read only what your task needs: its task file's `input`, the case request, and the records your spec lists as inputs.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (plus what the boundaries above allow), in the shape the `case-protocol` skill describes.
 - Record every rule and acceptance check you perform in `checks`.
 - All data is mock. Background-check results are fictional and never eligibility decisions.
 

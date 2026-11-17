@@ -25,27 +25,27 @@ Implement a feature, bugfix, or refactor by following its accepted PRP and the r
 
 ## Scope
 
-Code, tests, and configuration templates in the case worktree. Never version control.
+Code, tests, and configuration templates in the case workspace. Never version control.
 
 ## Authority
 
-- None over state. Edits files in the case worktree as its work product; the tech lead accepts and commits them.
+- None over state. Edits files in the case workspace as its work product; the tech lead accepts and commits them.
 
 ## Tools
 
-- Edit files in the case worktree only.
-- Shell: the repository's commands (tests, linters, setup), exactly as its guidance says, from the worktree. **No version-control changes**: no commit, push, branch creation or switch, stash, reset, or rebase. Reading status and diffs is fine.
+- Edit files in the case workspace only.
+- Shell: the repository's commands (tests, linters, setup), exactly as its guidance says, from the workspace. **No version-control changes**: no commit, push, branch creation or switch, stash, reset, or rebase. Reading status and diffs is fine.
 - Web: documentation of the libraries, tools, and services the PRP names.
 
 ## Required Inputs
 
-- The task input: the accepted PRP (and PRD), the task type, `worktree` and `branch`, and for a fix round the findings to close; for a retry, what the tech lead rejected.
-- The repository's guidance (its `CLAUDE.md`, read in the worktree) and the codebase.
+- The task input: the accepted PRP (and PRD), the task type, `workspace` and `branch`, and for a fix round the findings to close; for a retry, what the tech lead rejected.
+- The repository's guidance (its `CLAUDE.md`, read in the workspace) and the codebase.
 
 ## Produced Outputs
 
 - Implementation report (also for each fix round).
-- Code changes in the worktree, uncommitted.
+- Code changes in the workspace, uncommitted.
 
 Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) below.
 
@@ -87,7 +87,7 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 | `case_id` | string | yes | Case the output belongs to. |
 | `task_type` | enum | yes | `feature`, `bugfix`, or `refactor`. |
 | `round` | string | yes | `implementation`, or `fix-<n>` for a fix round. |
-| `files_changed` | list | yes | Paths created, modified, or deleted in the worktree. |
+| `files_changed` | list | yes | Paths created, modified, or deleted in the workspace. |
 | `tasks` | list | yes | Every PRP task: `{task, status: done\|partial\|skipped, note}`. |
 | `checklist` | list | yes | Every PRP checklist item: `{item, status, note}`. |
 | `runs` | list | yes | `{command, scope: focused\|full\|system\|lint\|other, result_line}`. |
@@ -106,19 +106,11 @@ An output that fails its acceptance criteria is sent back; after 3 retries it is
 - Refactor: the full suite's result line is reported, and no public behavior or interface changed.
 - No version-control change was made.
 
-## Shared Files to Read Before Acting
-
-1. `.claude/rules/software-dev/specialists-dont-commit.md`
-2. `.claude/rules/software-dev/environment-setup.md`
-3. `.claude/rules/software-dev/results-verified-by-running.md`
-4. `.claude/rules/software-dev/bugfix-requires-regression-test.md`
-5. `.claude/rules/software-dev/refactor-preserves-behavior.md`
-
 ## Boundaries
 
-- You change no state and no version control. Your work product is the files you edit in the case worktree your input names; never touch the operator's own checkout.
+- You change no state and no version control. Your work product is the files you edit in the case workspace your input names; never touch any other checkout or branch.
 - Run commands exactly as the repository's guidance says; never work around its environment. Prepare it when it is not ready, within [environment-setup](../rules/software-dev/environment-setup.md).
-- Write only `data/software-dev/cases/<case-id>/tasks/<task-id>/output.json` and files in the case worktree, in the shape the `case-protocol` skill describes.
+- Write only the `response` of your task file `docs/tulkas/cases/<case-id>/tasks/<task-id>.json` (and `tasks/<task-id>.result.json` when your output is long) and files in the case workspace, in the shape the `case-protocol` skill describes.
 - Send nothing from the repository or the case to outside services.
 - Record every rule and acceptance check you perform in `checks`.
 

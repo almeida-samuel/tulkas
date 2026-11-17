@@ -49,8 +49,8 @@ Present to the operator, in this order:
    - **Resolve** each conflict: rewrite, point to Tulkas, or remove. Removing anything that is not a duplicate of Tulkas knowledge needs an explicit yes.
    - **Keep** everything else as it is: house rules, examples, rationale. This is a refactor, not a rewrite; preserve the author's wording and structure.
    - **Table of contents**: if the file has one, keep it in sync.
-3. **Questions**: everything you could not verify (protected branches, whether case data is committed, domain facts), each with what you would assume and what it changes. Use AskUserQuestion for the ones with clear options.
-4. **Repository changes outside `CLAUDE.md`**: `.claude/tulkas.json`, `.gitignore` entries (`.tulkas/worktrees/`, and `data/<context>/` if case data is not committed), and what to do with competing skills (keep, or remove after the operator confirms). Propose removing a competing skill only once everything repository-specific in it has been harvested.
+3. **Questions**: everything you could not verify (protected branches, the base branch, the workspace mode, domain facts), each with what you would assume and what it changes. Use AskUserQuestion for the ones with clear options.
+4. **Repository changes outside `CLAUDE.md`**: `.claude/tulkas.json` (`context`, and `workspace` and `base` when they differ from the defaults: `worktree`, the default branch), the `.gitignore` entry `.tulkas/` (worktrees), and what to do with competing skills (keep, or remove after the operator confirms). Propose removing a competing skill only once everything repository-specific in it has been harvested.
 
 Wait for approval. The operator may approve all, some, or none.
 

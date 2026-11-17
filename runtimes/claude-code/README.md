@@ -37,7 +37,7 @@ The main conversation becomes the **dispatcher** and the **human boundary**. You
 | Case protocol (folders, tasks, outputs, events) | `.claude/skills/case-protocol/SKILL.md`, preloaded into every agent |
 | Dispatcher loop + human boundary | `.claude/skills/run-case/SKILL.md`, run by the main conversation |
 | Orchestrator turn procedure, case response, human request | `.claude/skills/orchestrator-turn/SKILL.md`, preloaded into every orchestrator |
-| Rule | `.claude/rules/<context>/<rule-id>.md`, path-scoped to `data/<context>/**`: loaded automatically when an agent touches that context's data. Agents also list their binding rules as a fallback |
+| Rule | `.claude/rules/<context>/<rule-id>.md`, path-scoped to `**/docs/tulkas/**`: loaded automatically when an agent touches case data or records (the path does not name the context; each rule lists the roles it binds). Agents also list their binding rules as a fallback |
 | Role (orchestrator, specialist, external party): spec + expected outputs | `.claude/agents/<context>-<role-id>.md` |
 | Guide | `.claude/skills/<context>-<guide-id>/SKILL.md`, preloaded into the roles that use it |
 | Human role | `contexts/<context>/human-roles/<role-id>.md`, no agent; reached through the human boundary |
@@ -58,5 +58,5 @@ Each fact lives in one file; links connect them. When something changes, update 
 
 - **New role**: new agent file (copy a sibling of the same kind) or, for a human, a `human-roles/` file. Add it to its unit file, `organization.md`, and the rules and contracts that involve it.
 - **New guide**: new skill folder; add it to the `skills:` list and Guides section of each agent that uses it.
-- **New rule**: new file in `.claude/rules/<context>/` (with the `paths` frontmatter) listing the roles it binds; add it to each of those agents' Rules section and "Shared Files to Read".
-- **New contract**: new file in `interaction-contracts/`; add it to the requester's and provider's Collaboration Interfaces and "Shared Files to Read", and to the interaction matrix in `organization.md`.
+- **New rule**: new file in `.claude/rules/<context>/` (with the `paths` frontmatter) listing the roles it binds; add it to each of those agents' Rules section (and to their "Shared Files to Read" list, in contexts whose agents keep one; rules load on their own, so the list is only a fallback and costs a re-read on every turn).
+- **New contract**: new file in `interaction-contracts/`; add it to the requester's and provider's Collaboration Interfaces (and "Shared Files to Read", where kept), and to the interaction matrix in `organization.md`.
