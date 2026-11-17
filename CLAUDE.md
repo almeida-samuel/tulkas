@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This file covers the **framework**. The case protocol (how agents read and write cases) is the `case-protocol` skill (`.claude/skills/case-protocol/SKILL.md`); the dispatcher loop is the `run-case` skill and an orchestrator's turn is the `orchestrator-turn` skill. Each context that runs on the framework has its own guidance file at `contexts/<context>/CLAUDE.md`. When working on a context, read its file as well. Contexts so far:
+This file covers the **framework**. The case protocol (how agents read and write cases) is the `case-protocol` skill (`.claude/skills/case-protocol/SKILL.md`); the dispatcher loop is the `run-case` skill, closing a case is the `close-case` skill, and an orchestrator's turn is the `orchestrator-turn` skill. Each context that runs on the framework has its own guidance file at `contexts/<context>/CLAUDE.md`. When working on a context, read its file as well. Contexts so far:
 
 - [Current State](#current-state)
 - [Project Overview](#project-overview)
@@ -93,6 +93,7 @@ The operator is whatever uses the framework to run a context. It is outside the 
 
 - **orchestrates cases**: opens each one with a **case request** (e.g., "a quotation for X"), sees its progress, and receives anything blocked, escalated, or awaiting a human;
 - receives a **case response** from the case's entry unit: the requested deliverable, the findings that block it, or the information still needed. When information is needed, the operator answers and the case resumes, so a case can go back and forth several times before it closes;
+- **closes each case**, as delivered or abandoned, whenever it decides; no case response closes a case by itself, and a closed case is never resumed;
 - is the **top authority**: the last step of every escalation chain and the final decision-maker on anything no role has authority for.
 
 The operator is not a role and is not defined by a context; a context may only give it a local name (e.g., "owner"). It is reached through the [human boundary](#human-boundary).
@@ -160,7 +161,7 @@ The framework's concepts don't depend on any agent platform. For this POC the on
 
 - `.claude/agents/<context>-<role-id>.md`: one agent per non-human role, holding its full role spec and expected outputs.
 - `.claude/skills/<context>-<guide-id>/`: one skill per guide, holding the full guide.
-- `.claude/skills/case-protocol/`, `run-case/`, `orchestrator-turn/`: the case protocol, the dispatcher loop, and the orchestrator turn (including the case response and human request).
+- `.claude/skills/case-protocol/`, `run-case/`, `close-case/`, `orchestrator-turn/`: the case protocol, the dispatcher loop, closing a case, and the orchestrator turn (including the case response and human request).
 - `.claude/skills/tulkas-init/`: prepares a repository for a context: audits its `CLAUDE.md` against the context's `repository-requirements.md` (if it has one), proposes a refactor, and applies it once the operator approves.
 - `.claude/rules/<context>/`: one rule file per context rule, path-scoped to `**/docs/tulkas/**` so it loads whenever an agent touches case data or records. The path no longer names the context, so each rule says which roles it binds and other roles ignore it.
 
@@ -204,7 +205,7 @@ runtimes/
   claude-code/README.md     # how .claude/ maps to the framework
 .claude/
   agents/                   # one per non-human role: spec + expected outputs
-  skills/                   # guides, case-protocol, run-case, orchestrator-turn (+ case response, human request)
+  skills/                   # guides, case-protocol, run-case, close-case, orchestrator-turn (+ case response, human request)
   rules/<context>/          # context rules, path-scoped to **/docs/tulkas/**
 ```
 
@@ -237,7 +238,7 @@ A context whose cases change the repository they run in declares a **case branch
 2. **Context organizational maps (current, draft):** per context, see its `CLAUDE.md`.
 3. Fixed workflow templates.
 4. Controlled dynamic extensions.
-5. **Runtime adapters (1.0 beta):** `runtimes/claude-code/`, run a case with `/run-case <context> <request>`.
+5. **Runtime adapters (1.0 beta):** `runtimes/claude-code/`, run a case with `/run-case <context> <request>` and close it with `/close-case [case-id]`.
 
 Do not move to a later stage without the user's direction.
 

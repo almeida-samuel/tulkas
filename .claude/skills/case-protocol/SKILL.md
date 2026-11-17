@@ -40,9 +40,13 @@ Shared records live in `docs/tulkas/records/<unit>/` and are changed **only** by
   "case_id": "20261117120000-short-slug",
   "context": "software-dev",
   "opened_at": "2026-11-17T12:00:00Z",
-  "workspace": {"mode": "worktree | branch | none", "branch": "tulkas/20261117120000-short-slug", "base": "main", "base_commit": "<sha>", "path": ".tulkas/worktrees/20261117120000-short-slug"}
+  "workspace": {"mode": "worktree | branch | none", "branch": "tulkas/20261117120000-short-slug", "base": "main", "base_commit": "<sha>", "path": ".tulkas/worktrees/20261117120000-short-slug"},
+  "closed_at": "2026-11-18T09:00:00Z",
+  "closure": {"reason": "delivered | abandoned", "note": null, "open_tasks": [], "branch_merged": false}
 }
 ```
+
+`closed_at` and `closure` appear only once the case is closed. **A case is closed only by the operator** (the `close-case` skill), whatever state its tasks, branch, or pull request are in: a merge is not required, and an open pull request stays open. A closed case is never resumed; further work is a new case.
 
 **Workspace.** A context whose cases change the repository declares a **case branch** in its `CLAUDE.md` (its name, built from the case ID only). The dispatcher then creates it when it opens the case, in one of two modes:
 

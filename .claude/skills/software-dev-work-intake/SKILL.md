@@ -79,10 +79,10 @@ An answer that changes product documents is applied in **one revision pass**, no
 
 ## 7. After Delivery
 
-The case stays open for changes **until its branch is merged**. After the deliverable is sent, the operator may ask for more on the same case: fix the open notes, adjust something, or change what was agreed.
+The case stays open for changes **until the operator closes it** (`/close-case`), whether or not its branch is merged. After the deliverable is sent, the operator may ask for more on the same case: fix the open notes, adjust something, or change what was agreed.
 
 - A change to what was agreed goes through the product documents first: one revision pass (§6), then one `engineering-change` `continue` carrying the change and the revised documents. Engineering plans it, and a changed PRP comes back for approval (§3.5) before it is implemented.
 - Fixing open notes, or an adjustment inside the agreed PRD, goes straight to Engineering in one `continue`.
 - Either way Engineering adds commits to the same branch (updating the case's pull request, if open) and returns `delivered` again; send the new deliverable.
-- Once the branch is merged, the case is done: anything further is a **new case**. Answer with an `information-needed` case response proposing it, with a one-line request the operator can open it with.
+- Once the case is closed, anything further is a **new case**, even while its pull request is open (a closed case is never resumed). If the operator asks for more on a case that is still open but already merged, the work cannot go on the merged branch: answer with an `information-needed` case response proposing it, with a one-line request the operator can open it with.
 - Quality's *outside this case* observations are never worked on in this case; list them in the deliverable so the operator can open cases for them.

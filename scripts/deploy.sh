@@ -8,7 +8,7 @@
 # Set CLAUDE_HOME to deploy somewhere other than ~/.claude (e.g. for a test).
 #
 # What goes where (under CLAUDE_HOME):
-#   skills/{case-protocol,run-case,orchestrator-turn,tulkas-init}/   framework protocol and setup
+#   skills/{case-protocol,run-case,close-case,orchestrator-turn,tulkas-init}/   framework protocol and setup
 #   agents/<context>-*.md                                 roles
 #   skills/<context>-*/                                   guides
 #   rules/<context>/                                      rules (paths resolve against the repo you work in)
@@ -25,7 +25,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 TARGET="${CLAUDE_HOME:-$HOME/.claude}"
 FW="$TARGET/tulkas"
 MANIFEST="$FW/manifest.txt"
-FRAMEWORK_SKILLS=(case-protocol run-case orchestrator-turn tulkas-init)
+FRAMEWORK_SKILLS=(case-protocol run-case close-case orchestrator-turn tulkas-init)
 
 DRY_RUN=0
 if [ "${1:-}" = "-n" ]; then DRY_RUN=1; shift; fi

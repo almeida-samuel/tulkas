@@ -30,12 +30,23 @@ In a repository that uses the framework, run `/tulkas-init <context>` once. It a
 
 The main conversation becomes the **dispatcher** and the **human boundary**. You are the operator: case responses and human requests appear in the conversation, and you answer there.
 
+## Close a Case
+
+```text
+/close-case                                       # the current case branch's case, or pick from the open cases
+/close-case 20261117120000-add-rate-limiting      # delivered
+/close-case 20261117120000-add-rate-limiting --abandon No longer needed
+```
+
+A case closes only when you close it; a merge is not required, so its pull request can stay open. Closing records the closure in the case files, runs the context's closing steps (software-dev commits and pushes the case folder, updating the pull request), and removes the case worktree (`--keep-workspace` keeps it). The case branch is never deleted. Further work is a new case.
+
 ## Where Each Definition Lives
 
 | Framework concept | File |
 |---|---|
 | Case protocol (folders, tasks, outputs, events) | `.claude/skills/case-protocol/SKILL.md`, preloaded into every agent |
 | Dispatcher loop + human boundary | `.claude/skills/run-case/SKILL.md`, run by the main conversation |
+| Closing a case | `.claude/skills/close-case/SKILL.md`, run by the main conversation |
 | Orchestrator turn procedure, case response, human request | `.claude/skills/orchestrator-turn/SKILL.md`, preloaded into every orchestrator |
 | Rule | `.claude/rules/<context>/<rule-id>.md`, path-scoped to `**/docs/tulkas/**`: loaded automatically when an agent touches case data or records (the path does not name the context; each rule lists the roles it binds). Agents also list their binding rules as a fallback |
 | Role (orchestrator, specialist, external party): spec + expected outputs | `.claude/agents/<context>-<role-id>.md` |

@@ -67,14 +67,22 @@ The **repository** a case runs in is the one the operator works from; its own gu
 | Commit on the case branch | State change, within authority | Tech Lead: as often as the work needs, code and case folder, only on the case branch ([case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)) |
 | Push the case branch | Allowed, never forced | Tech Lead, after each commit ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md)) |
 | Open the case's pull request (**one per case**), merge, or anything touching another branch | Outward-facing, hard to reverse | Only with the operator's approval ([push-merge-requires-operator](../../.claude/rules/software-dev/push-merge-requires-operator.md), [one-pull-request-per-case](../../.claude/rules/software-dev/one-pull-request-per-case.md)) |
+| Commit the case folder at closing, and push it | Mechanical, ordered by the operator's `/close-case` | Dispatcher, case folder only (see [Closing a Case](#closing-a-case)) |
 
-Specialists never change version control ([specialists-dont-commit](../../.claude/rules/software-dev/specialists-dont-commit.md)). In `worktree` mode, one worktree per case keeps parallel cases from writing the same files and leaves the operator's own checkout untouched; `branch` mode runs one case at a time in the operator's checkout. **A case closes when its branch is merged** (an approved `publish` merge, or the operator saying it merged it) **or when it is abandoned**, not when a deliverable is accepted: until then, the operator can add fixes and changes to it. After the merge, further work is a new case.
+Specialists never change version control ([specialists-dont-commit](../../.claude/rules/software-dev/specialists-dont-commit.md)). In `worktree` mode, one worktree per case keeps parallel cases from writing the same files and leaves the operator's own checkout untouched; `branch` mode runs one case at a time in the operator's checkout. **A case closes only when the operator closes it** (`/close-case`), as delivered or abandoned; its branch need not be merged, and its pull request may stay open for review and merge outside the case. Until then, the operator can add fixes and changes to it. After closing, further work is a new case, even while the pull request is still open.
 
 Each case lives in `docs/tulkas/cases/<case-id>/` inside its workspace and is committed whole with the case. Its documents are under `artifacts/<kind>/`, with kinds `features`, `bugfixes`, `refactors`, `experience`, `prds`, `prps`, `audits`; every document is named after the case ID.
 
 A repository is prepared with `/tulkas-init software-dev`, which checks its `CLAUDE.md` against [repository-requirements.md](repository-requirements.md) (what the roles need from it, the conflicts to resolve, and the Tulkas section to add).
 
-## Guides and Rules
+## Closing a Case
+
+The `close-case` skill closes a software-dev case with these steps:
+
+- **Look up**: the case's pull request, `gh pr list --head <branch> --state all --json url,state` (skip if `gh` is unavailable or there is no remote). Add `"pull_request": {"url", "state"}` (or `null`) to the `closure`.
+- **Commit**: in the case workspace, on the case branch only (checked as in [case-branch-only](../../.claude/rules/software-dev/case-branch-only.md)), stage the whole case folder (`git add -A <case folder>`) plus whatever the operator chose to commit, and commit `Close case <case-id> (<reason>)`, so the bookkeeping written after the Tech Lead's last commit is kept. **No file is left uncommitted**: after the commit, `git status --porcelain` in the workspace is empty, or the close is undone (see the skill). Code outside the case folder is never committed or discarded without the operator's choice.
+- **Push**: if the case branch has an upstream, push it without force; an open pull request is updated, not merged or closed.
+
 
 | Role | Guides |
 |---|---|

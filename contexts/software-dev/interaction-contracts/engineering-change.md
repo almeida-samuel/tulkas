@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Product asks Engineering to deliver the change an accepted PRD describes, verified by Quality, on the case branch and through a single pull request. Product also uses this contract to pass back the operator's answer on the plan and on open decisions, to ask for changes to delivered work (until the case is merged), and to have Engineering open the case's pull request or merge, once the operator approved it.
+Product asks Engineering to deliver the change an accepted PRD describes, verified by Quality, on the case branch and through a single pull request. Product also uses this contract to pass back the operator's answer on the plan and on open decisions, to ask for changes to delivered work (until the operator closes the case), and to have Engineering open the case's pull request or merge, once the operator approved it.
 
 ## Input
 
@@ -18,7 +18,7 @@ Product asks Engineering to deliver the change an accepted PRD describes, verifi
   - `continue`: resume after the operator answered. Carries, all in one request, whichever applies:
     - the operator's answer on the plan (`approved`, `change` with notes, or `stop`), with its human request ID;
     - the open decisions with the operator's answers (`{decision, answer, human_request}`);
-    - after `delivered` and until the case branch is merged: the changes the operator asked for (open notes to fix, or a change to what was agreed);
+    - after `delivered` and until the case is closed: the changes the operator asked for (open notes to fix, or a change to what was agreed);
     - any revised product documents, with their revision sections.
   - `publish`: carry out an approved action (open the case's pull request, or merge). Pushing the case branch needs no request: Engineering pushes after each commit. Requires the action exactly as approved, and the human request ID holding the `approved` response.
 - Every product document passed must have an `accepted` validation event ([pipeline-order](../../../.claude/rules/software-dev/pipeline-order.md)).

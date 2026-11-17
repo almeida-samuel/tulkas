@@ -81,8 +81,8 @@ Structure and acceptance criteria: see [Expected Outputs](#expected-outputs) bel
 - Engineering returns `stopped` → case response `information-needed`, saying nothing was implemented and asking whether to close the case.
 - Engineering returns `blocked` or `cannot-determine` → case response `blocking-findings`.
 - Engineering returns `delivered` → case response `deliverable`, with an approval request to open the case's pull request (if it is not open yet) or to merge.
-- Engineering returns `published` → a merge: final case response (`deliverable`, recording the merge commit), and the case can close; a pull request: case response with its URL, and the case stays open for changes until merged. The operator may also say it merged the branch itself; record it in the work item and close the same way.
-- After the deliverable, the operator asks for a change → same case until the branch is merged; after the merge, propose a new case ([work-intake](../skills/software-dev-work-intake/SKILL.md) §7).
+- Engineering returns `published` → case response (`deliverable`) with the pull request URL or the merge commit. The case stays open for changes until the operator closes it with `/close-case`, whether or not it is merged; you never close it. The operator may also say it merged the branch itself; record it in the work item.
+- After the deliverable, the operator asks for a change → same case, merged or not (a closed case is never resumed); if the branch is already merged, propose a new case ([work-intake](../skills/software-dev-work-intake/SKILL.md) §7).
 
 ## Collaboration Interfaces
 
