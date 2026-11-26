@@ -2,6 +2,7 @@
 name: software-dev-qa-developer
 description: QA Developer (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `qa-developer`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 skills:
   - case-protocol
   - software-dev-implementation-audit

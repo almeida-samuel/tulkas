@@ -2,6 +2,7 @@
 name: software-dev-external-provider
 description: External Provider (external party) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `external-provider`; not for direct use.
 tools: Read, Write, Edit, WebFetch, WebSearch
+model: sonnet
 skills:
   - case-protocol
   - software-dev-provider-inquiry

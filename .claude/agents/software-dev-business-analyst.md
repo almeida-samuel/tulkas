@@ -2,6 +2,7 @@
 name: software-dev-business-analyst
 description: Business Analyst (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `business-analyst`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep
+model: sonnet
 skills:
   - case-protocol
   - software-dev-feature-spec

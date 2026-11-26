@@ -2,6 +2,7 @@
 name: software-dev-ux-designer
 description: UX Designer (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `ux-designer`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep
+model: sonnet
 skills:
   - case-protocol
   - software-dev-experience-design

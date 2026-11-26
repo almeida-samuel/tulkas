@@ -2,6 +2,7 @@
 name: software-dev-software-developer
 description: Software Developer (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `software-developer`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
+model: sonnet
 skills:
   - case-protocol
   - software-dev-prp-implementation

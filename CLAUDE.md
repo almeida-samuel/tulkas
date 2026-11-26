@@ -32,7 +32,7 @@ This file covers the **framework**. The case protocol (how agents read and write
 
 ## Current State
 
-**Version 1.0.0-beta.2** (see `VERSION`). The framework concepts, the case protocol, and the Claude Code runtime adapter are stable enough to run cases; they may still change based on feedback. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. The only exception is the deploy script (`scripts/deploy.sh`), which copies files and never takes part in running a case. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
+**Version 1.0.0-beta.6** (see `VERSION`). The framework concepts, the case protocol, and the Claude Code runtime adapter are stable enough to run cases; they may still change based on feedback. There is no code, build, lint, or test tooling, only Markdown. **No programming language will be used**: the framework is executed by agents and skills following Markdown instructions and reading/writing case files. The only exception is the deploy script (`scripts/deploy.sh`), which copies files and never takes part in running a case. Keep framework knowledge in this file. Each context keeps a short guidance file (`contexts/<context>/CLAUDE.md`) plus its definition files (units, roles, contracts, and so on) next to it.
 
 Context organizational maps are still drafts, and fixed workflow templates and dynamic extensions are not started (see [The Pipeline](#the-pipeline)).
 

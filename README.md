@@ -123,4 +123,4 @@ runtimes/
 
 ## Status
 
-Version `1.0.0-beta.5`, design and early testing. The software-dev organizational map, guides, and rules are drafted and have run real cases: a multi-screen refactor in a Rails repository and a small bugfix, whose lessons shaped the cost controls and the `small` size class. Not built yet: workflow templates, a task budget per case, resuming an open case after `/clear`, the Release/Ops team, and adapters for other runtimes.
+Version `1.0.0-beta.6`, design and early testing. The software-dev organizational map, guides, and rules are drafted and have run real cases: a multi-screen refactor in a Rails repository and a small bugfix, whose lessons shaped the cost controls and the `small` size class. Not built yet: workflow templates, a task budget per case, resuming an open case after `/clear`, the Release/Ops team, and adapters for other runtimes.

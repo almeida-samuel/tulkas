@@ -2,6 +2,7 @@
 name: software-dev-software-architect
 description: Software Architect (specialist) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `software-architect`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
+model: opus
 skills:
   - case-protocol
   - software-dev-prp

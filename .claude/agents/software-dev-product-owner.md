@@ -2,6 +2,7 @@
 name: software-dev-product-owner
 description: Product Owner (unit orchestrator) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `product-owner`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep
+model: opus
 skills:
   - case-protocol
   - orchestrator-turn

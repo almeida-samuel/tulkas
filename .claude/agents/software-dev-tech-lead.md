@@ -2,6 +2,7 @@
 name: software-dev-tech-lead
 description: Tech Lead (unit orchestrator) of the software-dev context. Use only when the run-case dispatcher assigns a software-dev task to role `tech-lead`; not for direct use.
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: opus
 skills:
   - case-protocol
   - orchestrator-turn
